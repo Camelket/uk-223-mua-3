@@ -1,4 +1,3 @@
-using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.Repositories;
 
 namespace L_Bank.Cli;
@@ -10,6 +9,23 @@ public static class Simple
         ////////////////////
         // Your Code Here
         ////////////////////
+
+        Random random = new();
+        var allLedgers = ledgerRepository.GetAllLedgers().ToArray();
+
+        Console.WriteLine();
+        Console.WriteLine("Press Esc to Stop");
+        do
+        {
+            while (!Console.KeyAvailable)
+            {
+                var from = allLedgers[random.Next(allLedgers.Length)];
+                var to = allLedgers[random.Next(allLedgers.Length)];
+                var amount = random.NextInt64(1, 101);
+                ledgerRepository.Book(amount, from, to);
+                Console.WriteLine(".");
+            }
+        } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
 
         Console.WriteLine();
         Console.WriteLine("Getting total money in system at the end.");

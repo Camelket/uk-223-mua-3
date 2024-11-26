@@ -14,17 +14,19 @@ public class LedgerRepository : ILedgerRepository
     {
         this.databaseSettings = databaseSettings.Value;
     }
-    
+
     public void Book(decimal amount, Ledger from, Ledger to)
     {
+        from.Balance = LoadBalance(from);
         from.Balance -= amount;
         this.Update(from);
         // Complicate calculations
         Thread.Sleep(250);
+        to.Balance = LoadBalance(to);
         to.Balance += amount;
         this.Update(to);
     }
-    
+
     public decimal GetTotalMoney()
     {
         const string query = @$"SELECT SUM(balance) AS TotalBalance FROM {Ledger.CollectionName}";
@@ -46,11 +48,35 @@ public class LedgerRepository : ILedgerRepository
         return totalBalance;
     }
 
+    public decimal LoadBalance(Ledger ledger)
+    {
+        const string query =
+            @$"SELECT balance AS TotalBalance FROM {Ledger.CollectionName} WHERE id=@Id";
+        decimal balance = 0;
+
+        using (SqlConnection conn = new SqlConnection(this.databaseSettings.ConnectionString))
+        {
+            conn.Open();
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@Id", ledger.Id);
+                object result = cmd.ExecuteScalar();
+                if (result != DBNull.Value)
+                {
+                    balance = Convert.ToDecimal(result);
+                }
+            }
+        }
+
+        return balance;
+    }
+
     public IEnumerable<Ledger> GetAllLedgers()
     {
         var allLedgers = new List<Ledger>();
 
-        const string query = @$"SELECT id, name, balance FROM {Ledger.CollectionName} ORDER BY name";
+        const string query =
+            @$"SELECT id, name, balance FROM {Ledger.CollectionName} ORDER BY name";
         bool worked;
         do
         {
@@ -58,7 +84,9 @@ public class LedgerRepository : ILedgerRepository
             using (SqlConnection conn = new SqlConnection(this.databaseSettings.ConnectionString))
             {
                 conn.Open();
-                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                using (
+                    SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable)
+                )
                 {
                     try
                     {
@@ -70,9 +98,18 @@ public class LedgerRepository : ILedgerRepository
                                 {
                                     int id = reader.GetInt32(reader.GetOrdinal("id"));
                                     string name = reader.GetString(reader.GetOrdinal("name"));
-                                    decimal balance = reader.GetDecimal(reader.GetOrdinal("balance"));
+                                    decimal balance = reader.GetDecimal(
+                                        reader.GetOrdinal("balance")
+                                    );
 
-                                    allLedgers.Add(new Ledger { Id = id, Name = name, Balance = balance });
+                                    allLedgers.Add(
+                                        new Ledger
+                                        {
+                                            Id = id,
+                                            Name = name,
+                                            Balance = balance,
+                                        }
+                                    );
                                 }
                             }
                         }
@@ -104,7 +141,7 @@ public class LedgerRepository : ILedgerRepository
 
         return allLedgers;
     }
-    
+
     public Ledger? SelectOne(int id)
     {
         Ledger? retLedger = null;
@@ -116,7 +153,9 @@ public class LedgerRepository : ILedgerRepository
             using (SqlConnection conn = new SqlConnection(this.databaseSettings.ConnectionString))
             {
                 conn.Open();
-                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                using (
+                    SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable)
+                )
                 {
                     try
                     {
@@ -167,7 +206,12 @@ public class LedgerRepository : ILedgerRepository
                 string ordName = reader.GetString(reader.GetOrdinal("name"));
                 decimal ordBalance = reader.GetDecimal(reader.GetOrdinal("balance"));
 
-                retLedger = new Ledger { Id = ordId, Name = ordName, Balance = ordBalance };
+                retLedger = new Ledger
+                {
+                    Id = ordId,
+                    Name = ordName,
+                    Balance = ordBalance,
+                };
             }
         }
 
@@ -176,7 +220,8 @@ public class LedgerRepository : ILedgerRepository
 
     public void Update(Ledger ledger, SqlConnection conn, SqlTransaction? transaction)
     {
-        const string query = $"UPDATE {Ledger.CollectionName} SET name=@Name, balance=@Balance WHERE id=@Id";
+        const string query =
+            $"UPDATE {Ledger.CollectionName} SET name=@Name, balance=@Balance WHERE id=@Id";
         using (var cmd = new SqlCommand(query, conn, transaction))
         {
             cmd.Parameters.AddWithValue("@Name", ledger.Name);
@@ -196,7 +241,7 @@ public class LedgerRepository : ILedgerRepository
             this.Update(ledger, conn, null);
         }
     }
-    
+
     public decimal? GetBalance(int ledgerId, SqlConnection conn, SqlTransaction transaction)
     {
         const string query = @"SELECT balance FROM ledgers WHERE id=@Id";
