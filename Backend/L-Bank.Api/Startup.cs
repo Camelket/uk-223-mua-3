@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using L_Bank_W_Backend.DbAccess;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +13,10 @@ public class Startup(IConfiguration configuration)
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
+
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(
-                Configuration.GetConnectionString("ConnectionString"),
+                Configuration.GetConnectionString("Database"),
                 x => x.MigrationsAssembly("L-Bank.DbAccess")
             )
         );
