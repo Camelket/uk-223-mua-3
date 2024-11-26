@@ -8,10 +8,6 @@ public class AppDbContext : DbContext
     public DbSet<Ledger> Ledgers { get; set; }
     public DbSet<User> Users { get; set; }
 
-    public AppDbContext() {}
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer();
-    }
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options) { }
 }
