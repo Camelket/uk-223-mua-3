@@ -8,7 +8,7 @@ public static class PasswordHelper
     {
         return BCrypt.Net.BCrypt.HashPassword(clearTextPassword);
     }
-    
+
     public static bool VerifyPassword(string? clearTextPassword, User user)
     {
         return BCrypt.Net.BCrypt.Verify(clearTextPassword, user.PasswordHash);

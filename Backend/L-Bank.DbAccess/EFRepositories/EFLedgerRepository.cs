@@ -1,12 +1,12 @@
 using System;
-using System.Data.SqlClient;
 using L_Bank_W_Backend.Core.Models;
-using L_Bank_W_Backend.DbAccess.Repositories;
+using L_Bank_W_Backend.DbAccess.Interfaces;
 
-namespace L_Bank_W_Backend.DbAccess.efcore_repositories;
+namespace L_Bank_W_Backend.DbAccess.EFRepositories;
 
-public class LedgerRepository : ILedgerRepository
+public class EFLedgerRepository(AppDbContext context) : IEFLedgerRepository
 {
+    private readonly AppDbContext context = context;
     public string Book(decimal amount, Ledger from, Ledger to)
     {
         throw new NotImplementedException();
@@ -17,7 +17,12 @@ public class LedgerRepository : ILedgerRepository
         throw new NotImplementedException();
     }
 
-    public decimal? GetBalance(int ledgerId, SqlConnection conn, SqlTransaction transaction)
+    public decimal? GetBalance(int ledgerId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public decimal? GetBalanceInTransaction(int ledgerId)
     {
         throw new NotImplementedException();
     }
@@ -32,17 +37,17 @@ public class LedgerRepository : ILedgerRepository
         throw new NotImplementedException();
     }
 
-    public Ledger? SelectOne(int id, SqlConnection conn, SqlTransaction? transaction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Update(Ledger ledger, SqlConnection conn, SqlTransaction transaction)
+    public Ledger? SelectOneInTransaction(int id)
     {
         throw new NotImplementedException();
     }
 
     public void Update(Ledger ledger)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateInTransaction(Ledger ledger)
     {
         throw new NotImplementedException();
     }

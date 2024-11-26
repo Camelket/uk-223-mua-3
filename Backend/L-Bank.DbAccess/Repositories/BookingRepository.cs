@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using L_Bank_W_Backend.Models;
+using L_Bank_W_Backend.DbAccess.Interfaces;
+using L_Bank_W_Backend.Interfaces;
 using Microsoft.Extensions.Options;
 
 namespace L_Bank_W_Backend.DbAccess.Repositories
@@ -9,12 +10,16 @@ namespace L_Bank_W_Backend.DbAccess.Repositories
     {
         DatabaseSettings settings;
         ILedgerRepository ledgerRepository;
-        public BookingRepository(IOptions<DatabaseSettings> settings, ILedgerRepository ledgerRepository)
+
+        public BookingRepository(
+            IOptions<DatabaseSettings> settings,
+            ILedgerRepository ledgerRepository
+        )
         {
             this.settings = settings.Value;
             this.ledgerRepository = ledgerRepository;
         }
-        
+
         public bool Book(int sourceLedgerId, int destinationLKedgerId, decimal amount)
         {
             bool transactionWorked;
@@ -24,18 +29,31 @@ namespace L_Bank_W_Backend.DbAccess.Repositories
                 using (SqlConnection conn = new(settings.ConnectionString))
                 {
                     conn.Open();
-                    using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                    using (
+                        SqlTransaction transaction = conn.BeginTransaction(
+                            IsolationLevel.Serializable
+                        )
+                    )
                     {
                         try
                         {
-                            var sourceLedger = ledgerRepository.SelectOne(sourceLedgerId, conn, transaction);
-                            if (sourceLedger == null) {
+                            var sourceLedger = ledgerRepository.SelectOne(
+                                sourceLedgerId,
+                                conn,
+                                transaction
+                            );
+                            if (sourceLedger == null)
+                            {
                                 throw new Exception();
                             }
 
                             if (sourceLedger.Balance >= amount)
                             {
-                                var targetLedger = ledgerRepository.SelectOne(destinationLKedgerId, conn, transaction);
+                                var targetLedger = ledgerRepository.SelectOne(
+                                    destinationLKedgerId,
+                                    conn,
+                                    transaction
+                                );
                                 if (targetLedger == null)
                                 {
                                     throw new Exception();
@@ -53,16 +71,18 @@ namespace L_Bank_W_Backend.DbAccess.Repositories
                             try
                             {
                                 transaction.Rollback();
-                                if (ex.GetType() != typeof(Exception)) transactionWorked = false;
+                                if (ex.GetType() != typeof(Exception))
+                                    transactionWorked = false;
                             }
                             catch (Exception rollBackEx)
                             {
-                                if (rollBackEx.GetType() != typeof(Exception)) transactionWorked = false;
+                                if (rollBackEx.GetType() != typeof(Exception))
+                                    transactionWorked = false;
                             }
                         }
                     }
                 }
-            } while(!transactionWorked);
+            } while (!transactionWorked);
 
             // Machen Sie eine Connection und eine Transaktion
 
@@ -71,11 +91,10 @@ namespace L_Bank_W_Backend.DbAccess.Repositories
             // Schauen Sie ob genügend Geld beim Spender da ist
             // Führen Sie die Buchung durch und UPDATEn Sie die ledgers
             // Beenden Sie die Transaktion
-            // Bei einem Transaktionsproblem: Restarten Sie die Transaktion in einer Schleife 
+            // Bei einem Transaktionsproblem: Restarten Sie die Transaktion in einer Schleife
             // (Siehe LedgersModel.SelectOne)
 
             return false; // Lösch mich
         }
     }
 }
-

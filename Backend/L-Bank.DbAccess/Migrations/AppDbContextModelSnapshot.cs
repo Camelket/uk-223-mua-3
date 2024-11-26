@@ -21,6 +21,32 @@ namespace L_Bank_W_Backend.DbAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("L_Bank_W_Backend.Core.Models.Booking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int>("DestinationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SourceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DestinationId");
+
+                    b.HasIndex("SourceId");
+
+                    b.ToTable("Bookings", (string)null);
+                });
+
             modelBuilder.Entity("L_Bank_W_Backend.Core.Models.Ledger", b =>
                 {
                     b.Property<int>("Id")
@@ -30,14 +56,14 @@ namespace L_Bank_W_Backend.DbAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ledgers");
+                    b.ToTable("Ledgers", (string)null);
                 });
 
             modelBuilder.Entity("L_Bank_W_Backend.Core.Models.User", b =>
@@ -59,7 +85,28 @@ namespace L_Bank_W_Backend.DbAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
+
+                    b.HasDiscriminator<int>("Role").HasValue(1);
+                });
+
+            modelBuilder.Entity("L_Bank_W_Backend.Core.Models.Booking", b =>
+                {
+                    b.HasOne("L_Bank_W_Backend.Core.Models.Ledger", "Destination")
+                        .WithMany()
+                        .HasForeignKey("DestinationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("L_Bank_W_Backend.Core.Models.Ledger", "Source")
+                        .WithMany()
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Destination");
+
+                    b.Navigation("Source");
                 });
 #pragma warning restore 612, 618
         }

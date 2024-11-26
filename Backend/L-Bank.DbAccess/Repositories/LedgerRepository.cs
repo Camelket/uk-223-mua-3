@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Data;
 using System.Data.SqlClient;
 using L_Bank_W_Backend.Core.Models;
+using L_Bank_W_Backend.DbAccess.Interfaces;
 using Microsoft.Extensions.Options;
 
 namespace L_Bank_W_Backend.DbAccess.Repositories;

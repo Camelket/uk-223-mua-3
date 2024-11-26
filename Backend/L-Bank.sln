@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L-Bank.Cli", "L-Bank.Cli\L-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L-Bank.Api", "L-Bank.Api\L-Bank.Api.csproj", "{EE480C43-6BBB-4473-B0BF-AE1011702FFA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LBank.Cli2", "LBank.Cli2\LBank.Cli2.csproj", "{9823FEB4-E4E8-47A7-B066-92853E9C38C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{EE480C43-6BBB-4473-B0BF-AE1011702FFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE480C43-6BBB-4473-B0BF-AE1011702FFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE480C43-6BBB-4473-B0BF-AE1011702FFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9823FEB4-E4E8-47A7-B066-92853E9C38C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9823FEB4-E4E8-47A7-B066-92853E9C38C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9823FEB4-E4E8-47A7-B066-92853E9C38C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9823FEB4-E4E8-47A7-B066-92853E9C38C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

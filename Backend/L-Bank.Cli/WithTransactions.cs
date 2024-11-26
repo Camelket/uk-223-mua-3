@@ -1,5 +1,5 @@
 using L_Bank_W_Backend.Core.Models;
-using L_Bank_W_Backend.DbAccess.Repositories;
+using L_Bank_W_Backend.DbAccess.Interfaces;
 
 namespace L_Bank.Cli;
 
