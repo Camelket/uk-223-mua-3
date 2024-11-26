@@ -15,13 +15,16 @@ public static class WithTransactions
 
         var random = new Random();
         var allLedgersAsArray = ledgers.ToArray();
-        while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape))
+        do
         {
-            var from = allLedgersAsArray[random.Next(allLedgersAsArray.Length)];
-            var to = allLedgersAsArray[random.Next(allLedgersAsArray.Length)];
-            var amount = random.NextInt64(1, 101);
-            //Console.Write(ledgerRepository.Book(amount, from, to)); !Uncomment this line
-        }
+            while (!Console.KeyAvailable)
+            {
+                var from = allLedgersAsArray[random.Next(allLedgersAsArray.Length)];
+                var to = allLedgersAsArray[random.Next(allLedgersAsArray.Length)];
+                var amount = random.NextInt64(1, 101);
+                Console.WriteLine(ledgerRepository.Book(amount, from, to));
+            }
+        } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
 
         Console.WriteLine();
         ////////////////////
