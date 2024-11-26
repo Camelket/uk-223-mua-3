@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>JSON-MAN</title>
+    <style>
+        * {
+            font-family: sans-serif;
+            font-size: 30px;
+            color: blue;
+        }
+
+        body {
+            padding: 3%;
+        }
+
+        input, table, td:last-of-type {
+            width: 100%;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+        }
+    </style>
+    <script type="text/javascript">
+/*
+request = {
+	verb: "GET POST PUT PATCH DELETE",
+	path: "/api/",
+	headers: {"header1":"value1","header2":"value2"},
+	data: "{'is':'json'}",
+	onprogress: function(percent){}
+};
+*/
+function ajax2(request) {
+	var obj = "object";
+	if (typeof request != obj) { request = {}; }
+	var undef = "undefined";
+	var canPromise = (typeof Promise != undef);
+	var xmlobj;
+	if (typeof XMLHttpRequest != undef) {
+		xmlobj = new XMLHttpRequest();
+	}
+	else if (typeof window.ActiveXObject != undef) {
+		var aVersions = ["MSXML2.XMLHttp.5.0", "MSXML2.XMLHttp.4.0", "MSXML2.XMLHttp.3.0", "MSXML2.XMLHttp", "Microsoft.XMLHttp"];
+		for (var i = 0; i < aVersions.length; i++) {
+			try {
+				xmlobj = new ActiveXObject(aVersions[i]);
+				break;
+			} catch (err) {
+				//void
+			}
+		}
+	}
+	if (typeof xmlobj != obj) {
+		return {then:function(){return{catch:function(ca){ca("XMLHttpRequest object could not be created");}}}};
+	}
+	if(typeof request.onprogress == "function" && typeof xmlobj.upload == obj) {
+		xmlobj.upload.addEventListener("progress", function (event) {
+			request.onprogress(Math.floor(event.loaded / event.total * 100));
+		});
+	}
+	// if no verb is specified then use "get"; if no path is specified then use the current file
+	xmlobj.open(request.verb || "get", request.path || location.pathname, canPromise);
+	xmlobj.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+	if(typeof request.headers == obj) {
+		for(var prop in request.headers) {
+			xmlobj.setRequestHeader(prop, request.headers[prop]);
+		}
+	}
+	xmlobj.send(request.data || null);
+	if(canPromise) {
+		return new Promise(function (resolve, reject) {
+			xmlobj.onreadystatechange = function () {
+				if (xmlobj.readyState == 4) {
+					if (xmlobj.status >= 200 && xmlobj.status < 300) {
+						resolve(xmlobj.responseText);
+					}
+					else {
+						reject(xmlobj.statusText);
+					}
+				}
+			};
+		});
+	}
+	else {
+		if (xmlobj.status >= 200 && xmlobj.status < 300) {
+			return {then:function(th){th(xmlobj.responseText);return{catch:function(){}}}};
+		}
+		else {
+			return {then:function(){return{catch:function(ca){ca(xmlobj.statusText);}}}};
+		}
+	}
+}
+var headersobj = null;
+function setHeadersColor(input) {
+	try {
+		headersobj = JSON.parse(input.value);
+		if (Array.isArray(headersobj)) {
+			headersobj = null;
+			input.style.color = "red";
+		}
+		else {
+			input.style.color = "#0b0";
+		}
+	}
+	catch {
+		headersobj = null;
+		input.style.color = "red";
+	}
+}
+function setBodyColor(input) {
+	try {
+		JSON.parse(input.value);
+		input.style.color = "#0b0";
+	}
+	catch {
+		input.style.color = "red";
+	}
+}
+function submitRequestForm(form) {
+	ajax2({
+		verb: form.requestmethod.value,
+		path: form.endpoint.value,
+		headers: headersobj,
+		data: form.requestbody.value
+	}).then(function (txt) {
+		form.responsebody.value = txt;
+		return false;
+	}).catch(function (err) {
+		alert(err);
+		form.reset();
+		return false;
+	});
+	return false;
+}
+    </script>
+</head>
+<body>
+    <h1>JSON-MAN</h1>
+    <form method="get" action="" onsubmit="return submitRequestForm(this);">
+        <div>
+            <table><tr><td><select name="requestmethod"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option></select></td><td><input type="text" name="endpoint" placeholder="ENDPOINT" /></td></tr></table>
+        </div>
+        <div>
+            <input type="text" name="headers" placeholder='HEADERS EXAMPLE: {"header1":"value1","header2":"value2"}' onchange="setHeadersColor(this);" onkeyup="setHeadersColor(this);" autocomplete="off" />
+        </div>
+        <div>
+            <textarea name="requestbody" placeholder="REQUEST BODY" onchange="setBodyColor(this);" onkeyup="setBodyColor(this);"></textarea>
+        </div>
+        <div>
+            <textarea name="responsebody" placeholder="RESPONSE BODY" readonly></textarea>
+        </div>
+        <div>
+            <button type="submit">submit</button>
+        </div>
+    </form>
+</body>
+</html>
