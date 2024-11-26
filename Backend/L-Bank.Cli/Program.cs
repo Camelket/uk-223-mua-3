@@ -1,7 +1,6 @@
 ﻿using L_Bank_W_Backend.DbAccess;
 using L_Bank_W_Backend.DbAccess.Repositories;
 using L_Bank_W_Backend.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
