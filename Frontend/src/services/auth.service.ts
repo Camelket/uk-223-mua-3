@@ -5,10 +5,10 @@ import { Injectable } from '@angular/core';
 })
 export class AuthService {
   private tokenKey = 'authToken';
-  private isAuthenticated : boolean | null = null; // Set this based on your authentication logic
+  private isAuthenticated: boolean | null = null;
 
   isLoggedIn() {
-    if(this.isAuthenticated == null) {
+    if (this.isAuthenticated == null) {
       this.isAuthenticated = this.getToken() != null;
     }
 
@@ -16,12 +16,12 @@ export class AuthService {
   }
 
   setToken(token: string) {
-    localStorage.setItem(this.tokenKey, token); // Or sessionStorage
+    localStorage.setItem(this.tokenKey, token);
     this.isAuthenticated = true;
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey); // Or sessionStorage
+    return localStorage.getItem(this.tokenKey);
   }
 
   clearToken() {
