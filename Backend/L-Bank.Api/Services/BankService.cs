@@ -1,11 +1,9 @@
 using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.Interfaces;
-using L_Bank_W_Backend.DbAccess.Repositories;
 using L_Bank_W_Backend.Interfaces;
 using L_Bank.Api.Dtos;
 using L_Bank.Api.Helper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace L_Bank.Api.Services;
 
