@@ -7,5 +7,5 @@ public interface IBookingRepository
 
 public interface IEFBookingRepository
 {
-    bool Book(int sourceLedgerId, int destinationLKedgerId, decimal amount);
+    Task<bool> Book(int sourceId, int targetId, decimal amount);
 }

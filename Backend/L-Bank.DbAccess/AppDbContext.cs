@@ -13,6 +13,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             e.HasKey(e => e.Id);
 
+            e.HasOne(e => e.User)
+                .WithMany(e => e.Ledgers)
+                .HasForeignKey(e => e.UserId);
+
             e.ToTable("Ledgers");
         });
 

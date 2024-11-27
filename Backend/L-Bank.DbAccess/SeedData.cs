@@ -47,8 +47,8 @@ public static class SeedData
     ];
     public static List<Ledger> LedgerSeed =
     [
-        new() { Name = "Manitu AG", Balance = 1000 },
-        new() { Name = "Chrysalkis GmbH", Balance = 2000 },
-        new() { Name = "Smith & Co KG", Balance = 3000 },
+        new() { Name = "Manitu AG", Balance = 1000, UserId = 1 },
+        new() { Name = "Chrysalkis GmbH", Balance = 2000 , UserId = 2},
+        new() { Name = "Smith & Co KG", Balance = 3000, UserId = 2 },
     ];
 }

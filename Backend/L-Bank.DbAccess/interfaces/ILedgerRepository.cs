@@ -17,13 +17,8 @@ public interface ILedgerRepository
 
 public interface IEFLedgerRepository
 {
-    IEnumerable<Ledger> GetAllLedgers();
-    string Book(decimal amount, Ledger from, Ledger to);
-    decimal GetTotalMoney();
-    Ledger? SelectOne(int id);
-    void Update(Ledger ledger);
-    decimal? GetBalance(int ledgerId);
-    Ledger? SelectOneInTransaction(int id);
-    void UpdateInTransaction(Ledger ledger);
-    decimal? GetBalanceInTransaction(int ledgerId);
+    Task<IEnumerable<Ledger>> GetAllLedgers();
+    Task<decimal> GetTotalMoney();
+    Task<Ledger?> GetOne(int id);
+    Task<Ledger> Save(Ledger ledger);
 }

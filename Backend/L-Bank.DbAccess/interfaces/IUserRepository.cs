@@ -14,12 +14,7 @@ public interface IUserRepository
 
 public interface IEFUserRepository
 {
-    User? Authenticate(string? username, string? password);
-    User SelectOne(int id);
-    void Update(User user);
-    User Insert(User user);
-    void Delete(int id);
-    void UpdateInTransaction(User user);
-    User InsertInTransaction(User user);
-    void DeleteInTransaction(int id);
+    Task<User?> Authenticate(string username, string password);
+    Task<User> GetOne(int id);
+    Task<User> Save(User user);
 }
