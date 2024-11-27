@@ -6,15 +6,15 @@ namespace L_Bank.Api.Services;
 public interface IBankService
 {
     // including ledgers
-    Task<UserResponse> GetUser(int userId);
+    Task<DtoWrapper<UserResponse>> GetUser(int userId);
 
-    Task<LedgerResponse> GetLedger(int ledgerId);
-    Task<List<LedgerResponse>> GetAllLedgers();
+    Task<DtoWrapper<LedgerResponse>> GetLedger(int ledgerId);
+    Task<DtoWrapper<List<LedgerResponse>>> GetAllLedgers();
 
-    Task<BookingResponse> GetBooking(int bookingId);
-    Task<List<Booking>> GetAllBookings();
-    Task<List<Booking>> GetBookingsForLedger(int ledgerId);
-    Task<List<Booking>> GetBookingsForUser(int userId);
+    Task<DtoWrapper<BookingResponse>> GetBooking(int bookingId);
+    Task<DtoWrapper<List<Booking>>> GetAllBookings();
+    Task<DtoWrapper<List<Booking>>> GetBookingsForLedger(int ledgerId);
+    Task<DtoWrapper<List<Booking>>> GetBookingsForUser(int userId);
 
-    Task<Booking> NewBooking(BookingRequest request);
+    Task<DtoWrapper<Booking>> NewBooking(BookingRequest request);
 }
