@@ -75,7 +75,7 @@ namespace L_Bank.Api.Controllers
             );
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<LedgerResponse>>> GetAllLedgers()
         {
