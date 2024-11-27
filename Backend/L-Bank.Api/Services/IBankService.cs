@@ -20,4 +20,5 @@ public interface IBankService
     Task<DtoWrapper<LedgerResponse>> NewLedger(LedgerRequest request, int userId);
 
     Task<bool> LedgerBelongsToUser(int ledgerId, int userId);
+    Task<bool> BookingBelongsToUser(int bookingId, int userId);
 }

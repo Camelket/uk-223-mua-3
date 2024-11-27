@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace L_Bank.Api.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "User")]
     public class LedgersController : ControllerBase
@@ -104,7 +104,7 @@ namespace L_Bank.Api.Controllers
             return Ok(result.Data);
         }
 
-        [HttpPost("{userId}")]
+        [HttpPost("users/{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<LedgerResponse>> NewLedger(LedgerRequest request, int userId)
         {

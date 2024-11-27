@@ -237,4 +237,14 @@ public class BankService(
         var ledger = await ledgerRepository.GetOne(ledgerId);
         return ledger?.UserId == userId;
     }
+
+    public async Task<bool> BookingBelongsToUser(int bookingId, int userId)
+    {
+        var booking = await bookingRepository.GetOneWithLedgers(bookingId);
+        if (booking != null && booking.Source != null && booking.Destination != null)
+        {
+            return userId == booking.Source.UserId || userId == booking.Destination.UserId;
+        }
+        return false;
+    }
 }

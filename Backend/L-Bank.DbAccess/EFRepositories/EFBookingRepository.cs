@@ -43,6 +43,16 @@ public class EFBookingRepository(AppDbContext context, ILogger<EFBookingReposito
         return await context.Set<Booking>().AsNoTracking().FirstAsync(x => x.Id == bookingId);
     }
 
+    public async Task<Booking?> GetOneWithLedgers(int bookingId)
+    {
+        return await context
+            .Set<Booking>()
+            .AsNoTracking()
+            .Include(x => x.Source)
+            .Include(x => x.Destination)
+            .FirstAsync(x => x.Id == bookingId);
+    }
+
     public SqlServerRetryingExecutionStrategy StartRetryExecution(int maxRetry)
     {
         return new SqlServerRetryingExecutionStrategy(context, maxRetry);

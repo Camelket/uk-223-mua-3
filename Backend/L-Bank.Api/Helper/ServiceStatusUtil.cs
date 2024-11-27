@@ -8,6 +8,7 @@ public static class ServiceStatusUtil
         var statusCode = status switch
         {
             ServiceStatus.Success => HttpStatusCode.OK,
+            ServiceStatus.NotFound => HttpStatusCode.NotFound,
             ServiceStatus.Failed => HttpStatusCode.InternalServerError,
             _ => HttpStatusCode.InternalServerError,
         };
