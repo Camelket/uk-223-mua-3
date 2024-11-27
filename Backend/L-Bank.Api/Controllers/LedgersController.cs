@@ -67,7 +67,7 @@ namespace L_Bank.Api.Controllers
             );
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<LedgerResponse>>> GetAllLedgers()
         {
@@ -84,7 +84,7 @@ namespace L_Bank.Api.Controllers
             return Ok(result.Data);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<LedgerResponse>> NewLedger(LedgerRequest request)
         {
@@ -104,7 +104,7 @@ namespace L_Bank.Api.Controllers
             return Ok(result.Data);
         }
 
-        [HttpPut("{userId}")]
+        [HttpPost("{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<LedgerResponse>> NewLedger(LedgerRequest request, int userId)
         {
