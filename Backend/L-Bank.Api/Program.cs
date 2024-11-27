@@ -3,6 +3,7 @@ using L_Bank_W_Backend.DbAccess;
 using L_Bank_W_Backend.DbAccess.EFRepositories;
 using L_Bank_W_Backend.DbAccess.Interfaces;
 using L_Bank_W_Backend.Interfaces;
+using L_Bank.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -29,6 +30,10 @@ namespace L_Bank_W_Backend
 
             builder.Services.Configure<JwtSettings>(
                 builder.Configuration.GetSection("JwtSettings")
+            );
+
+            builder.Services.Configure<DatabaseSettings>(
+                builder.Configuration.GetSection("DatabaseSettings")
             );
 
             var dbSettings =
@@ -64,14 +69,17 @@ namespace L_Bank_W_Backend
 
                     x.RequireHttpsMetadata = false;
                     x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
+                    if (jwtSettings?.PrivateKey != null)
                     {
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.ASCII.GetBytes(jwtSettings.PrivateKey)
-                        ),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                    };
+                        x.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            IssuerSigningKey = new SymmetricSecurityKey(
+                                Encoding.ASCII.GetBytes(jwtSettings.PrivateKey)
+                            ),
+                            ValidateIssuer = false,
+                            ValidateAudience = false,
+                        };
+                    }
                 });
 
             builder.Services.AddAuthorization();
@@ -79,6 +87,8 @@ namespace L_Bank_W_Backend
             builder.Services.AddTransient<IEFLedgerRepository, EFLedgerRepository>();
             builder.Services.AddTransient<IEFUserRepository, EFUserRepository>();
             builder.Services.AddTransient<IEFBookingRepository, EFBookingRepository>();
+            builder.Services.AddTransient<IAuthService, AuthService>();
+            builder.Services.AddTransient<IBankService, BankService>();
 
             builder.Services.AddControllers();
 
