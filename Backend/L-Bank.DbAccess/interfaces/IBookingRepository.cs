@@ -10,6 +10,7 @@ public interface IBookingRepository
 public interface IEFBookingRepository
 {
     Task<bool> Book(int sourceId, int targetId, decimal amount);
+    Task<IEnumerable<Booking>> GetAllBookings();
     Task<Booking?> GetOne(int bookingId);
     Task<IEnumerable<Booking>> GetByLedger(int ledgerId);
     Task<IEnumerable<Booking>> GetbyUser(int userId);

@@ -1,5 +1,3 @@
-using System;
-using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.Interfaces;
 using L_Bank_W_Backend.Interfaces;
 using L_Bank.Api.Dtos;
@@ -17,9 +15,20 @@ public class BankService(
     private readonly IEFUserRepository userRepository = userRepository;
     private readonly IEFLedgerRepository ledgerRepository = ledgerRepository;
 
-    public Task<DtoWrapper<List<BookingResponse>>> GetAllBookings()
+    public async Task<DtoWrapper<List<BookingResponse>>> GetAllBookings()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var bookings = await bookingRepository.GetAllBookings();
+            return DtoWrapper<List<BookingResponse>>.WrapDto(
+                bookings.Select(x => DtoMapper.ToBookingResponse(x)).ToList(),
+                null
+            );
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<List<BookingResponse>>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
+        }
     }
 
     public async Task<DtoWrapper<List<LedgerResponse>>> GetAllLedgers()
@@ -42,11 +51,22 @@ public class BankService(
     {
         try
         {
-            var booking = await bookingRepository.
+            var booking = await bookingRepository.GetOne(bookingId);
+            if (booking != null)
+            {
+                return DtoWrapper<BookingResponse>.WrapDto(
+                    DtoMapper.ToBookingResponse(booking),
+                    null
+                );
+            }
+            return DtoWrapper<BookingResponse>.WrapDto(
+                ServiceStatus.NotFound,
+                "Booking doesnt exist"
+            );
         }
         catch (Exception ex)
         {
-
+            return DtoWrapper<BookingResponse>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
         }
     }
 
