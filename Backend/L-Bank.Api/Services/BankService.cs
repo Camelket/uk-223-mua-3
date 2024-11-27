@@ -1,7 +1,10 @@
+using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.Interfaces;
+using L_Bank_W_Backend.DbAccess.Repositories;
 using L_Bank_W_Backend.Interfaces;
 using L_Bank.Api.Dtos;
 using L_Bank.Api.Helper;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace L_Bank.Api.Services;
 
@@ -14,6 +17,21 @@ public class BankService(
     private readonly IEFBookingRepository bookingRepository = bookingRepository;
     private readonly IEFUserRepository userRepository = userRepository;
     private readonly IEFLedgerRepository ledgerRepository = ledgerRepository;
+
+    public async Task<DtoWrapper<LedgerResponse>> NewLedger(LedgerRequest request, int userId)
+    {
+        try
+        {
+            var ledger = await ledgerRepository.Save(
+                new Ledger { Name = request.Name, UserId = userId }
+            );
+            return DtoWrapper<LedgerResponse>.WrapDto(DtoMapper.ToLedgerResponse(ledger), null);
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<LedgerResponse>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
+        }
+    }
 
     public async Task<DtoWrapper<List<BookingResponse>>> GetAllBookings()
     {
@@ -122,6 +140,11 @@ public class BankService(
         }
     }
 
+    public Task<DtoWrapper<UserResponse>> GetUser(int userId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<DtoWrapper<UserResponse>> GetUserWithLedgers(int userId)
     {
         try
@@ -139,8 +162,56 @@ public class BankService(
         }
     }
 
-    public Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request)
+    public async Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request)
+    {
+        try
+        {
+            var booking = await bookingRepository.Book(
+                request.SourceId,
+                request.TargetId,
+                request.Amount
+            );
+            if (booking != null)
+            {
+                return DtoWrapper<BookingResponse>.WrapDto(
+                    DtoMapper.ToBookingResponse(booking),
+                    null
+                );
+            }
+            return DtoWrapper<BookingResponse>.WrapDto(
+                ServiceStatus.TransactionFailed,
+                "Transaction was unable to complete - Booking not recorded"
+            );
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<BookingResponse>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
+        }
+    }
+
+    Task<DtoWrapper<List<Booking>>> IBankService.GetAllBookings()
     {
         throw new NotImplementedException();
+    }
+
+    Task<DtoWrapper<List<Booking>>> IBankService.GetBookingsForLedger(int ledgerId)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<DtoWrapper<List<Booking>>> IBankService.GetBookingsForUser(int userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<DtoWrapper<Booking>> IBankService.NewBooking(BookingRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> LedgerBelongsToUser(int ledgerId, int userId)
+    {
+        var ledger = await ledgerRepository.GetOne(ledgerId);
+        return ledger?.UserId == userId;
     }
 }

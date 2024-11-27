@@ -6,4 +6,6 @@ public class BookingResponse
     public int SourceId { get; set; }
     public int TargetId { get; set; }
     public decimal TransferedAmount { get; set; }
+
+    public DateTime Date { get; set; }
 }
