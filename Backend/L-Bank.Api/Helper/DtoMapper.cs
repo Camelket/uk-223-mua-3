@@ -11,6 +11,7 @@ public static class DtoMapper
         return new LedgerResponse()
         {
             Id = ledger.Id,
+            UserId = ledger.UserId,
             Name = ledger.Name,
             Balance = ledger.Balance,
         };
@@ -35,6 +36,7 @@ public static class DtoMapper
             SourceId = booking.SourceId,
             TargetId = booking.DestinationId,
             TransferedAmount = booking.Amount,
+            Date = booking.Date,
         };
     }
 }
