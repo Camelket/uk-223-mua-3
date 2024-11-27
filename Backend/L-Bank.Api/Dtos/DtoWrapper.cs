@@ -8,6 +8,7 @@ public enum ServiceStatus
     Success = 0,
     Failed = 1,
     NotFound = 2,
+    TransactionFailed = 3,
 }
 
 public class DtoWrapper<T>

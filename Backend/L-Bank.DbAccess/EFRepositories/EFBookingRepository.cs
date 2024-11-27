@@ -47,7 +47,7 @@ public class EFBookingRepository(
         return await context.Set<Booking>().AsNoTracking().FirstAsync(x => x.Id == bookingId);
     }
 
-    async Task<bool> IEFBookingRepository.Book(int sourceId, int targetId, decimal amount)
+    async Task<Booking?> IEFBookingRepository.Book(int sourceId, int targetId, decimal amount)
     {
         context.Database.BeginTransaction(IsolationLevel.Serializable);
         var sourceLedger = await ledgerRepository.GetOne(sourceId);
@@ -55,34 +55,33 @@ public class EFBookingRepository(
         if (sourceLedger == null || targetLedger == null)
         {
             context.Database.RollbackTransaction();
-            return false;
+            return null;
         }
 
         if (sourceLedger.Balance < amount)
         {
             context.Database.RollbackTransaction();
             _logger.LogDebug("Not enough money in source ledger");
-            return false;
+            return null;
         }
 
         sourceLedger.Balance -= amount;
         targetLedger.Balance += amount;
 
-        context
-            .Set<Booking>()
-            .Add(
-                new Booking
-                {
-                    Amount = amount,
-                    SourceId = sourceLedger.Id,
-                    DestinationId = targetLedger.Id,
-                    Date = DateTime.Now,
-                }
-            );
+        var booking = new Booking
+        {
+            Amount = amount,
+            SourceId = sourceLedger.Id,
+            DestinationId = targetLedger.Id,
+            Date = DateTime.Now,
+        };
+
+        context.Set<Booking>().Add(booking);
         await ledgerRepository.Save(sourceLedger);
         await ledgerRepository.Save(targetLedger);
+        
         await context.SaveChangesAsync();
         context.Database.CommitTransaction();
-        return true;
+        return booking;
     }
 }

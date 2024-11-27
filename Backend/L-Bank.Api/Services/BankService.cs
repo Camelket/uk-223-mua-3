@@ -139,8 +139,30 @@ public class BankService(
         }
     }
 
-    public Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request)
+    public async Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var booking = await bookingRepository.Book(
+                request.SourceId,
+                request.TargetId,
+                request.Amount
+            );
+            if (booking != null)
+            {
+                return DtoWrapper<BookingResponse>.WrapDto(
+                    DtoMapper.ToBookingResponse(booking),
+                    null
+                );
+            }
+            return DtoWrapper<BookingResponse>.WrapDto(
+                ServiceStatus.TransactionFailed,
+                "Transaction was unable to complete - Booking not recorded"
+            );
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<BookingResponse>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
+        }
     }
 }
