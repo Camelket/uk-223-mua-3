@@ -31,18 +31,15 @@ namespace L_Bank_W_Backend
                 builder.Configuration.GetSection("JwtSettings")
             );
 
-            builder.Services.Configure<DatabaseSettings>(
-                builder.Configuration.GetSection("DatabaseSettings")
-            );
+            var dbSettings =
+                builder.Configuration.GetSection("DatabaseSettings").Get<DatabaseSettings>()
+                ?? throw new InvalidOperationException();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options
                     .UseSqlServer(
-                        builder
-                            .Configuration.GetSection("DatabaseSettings")
-                            .Get<DatabaseSettings>()
-                            .ConnectionString,
+                        dbSettings.ConnectionString ?? "",
                         x => x.MigrationsAssembly("L-Bank.DbAccess")
                     )
                     .UseSeeding(
@@ -76,11 +73,11 @@ namespace L_Bank_W_Backend
                         ValidateAudience = false,
                     };
                 });
+
             builder.Services.AddAuthorization();
-            builder.Services.AddTransient<IDatabaseSeeder, DatabaseSeeder>();
+
             builder.Services.AddTransient<IEFLedgerRepository, EFLedgerRepository>();
             builder.Services.AddTransient<IEFUserRepository, EFUserRepository>();
-            // builder.Services.AddTransient<ILoginService, LoginService>();
             builder.Services.AddTransient<IEFBookingRepository, EFBookingRepository>();
 
             builder.Services.AddControllers();
@@ -127,7 +124,6 @@ namespace L_Bank_W_Backend
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             else
@@ -147,27 +143,6 @@ namespace L_Bank_W_Backend
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
-            //app.MapHub<ChangedHub>("/changedHub");
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-
-                try
-                {
-                    // Example: Run a startup task
-                    var databaseSeeder = services.GetRequiredService<IDatabaseSeeder>();
-                    Console.WriteLine("Initializing database.");
-                    databaseSeeder.Initialize();
-                    Console.WriteLine("Seeding data.");
-                    databaseSeeder.Seed();
-                }
-                catch (Exception ex)
-                {
-                    // Log exceptions or handle errors
-                    Console.WriteLine($"Error during startup: {ex.Message}");
-                }
-            }
 
             app.Run();
         }
