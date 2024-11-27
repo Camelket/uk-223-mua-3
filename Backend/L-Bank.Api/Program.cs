@@ -4,6 +4,7 @@ using L_Bank_W_Backend.DbAccess.EFRepositories;
 using L_Bank_W_Backend.DbAccess.Interfaces;
 using L_Bank_W_Backend.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -33,6 +34,24 @@ namespace L_Bank_W_Backend
             builder.Services.Configure<DatabaseSettings>(
                 builder.Configuration.GetSection("DatabaseSettings")
             );
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                options
+                    .UseSqlServer(
+                        builder
+                            .Configuration.GetSection("DatabaseSettings")
+                            .Get<DatabaseSettings>()
+                            .ConnectionString,
+                        x => x.MigrationsAssembly("L-Bank.DbAccess")
+                    )
+                    .UseSeeding(
+                        (context, _) =>
+                        {
+                            SeedData.Seed(context);
+                        }
+                    );
+            });
 
             builder
                 .Services.AddAuthentication(x =>

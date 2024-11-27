@@ -58,6 +58,7 @@ public class AuthService : IAuthService
 
         var claims = new ClaimsIdentity();
         claims.AddClaim(new Claim(ClaimTypes.Name, user.Username));
+        claims.AddClaim(new Claim(ClaimTypes.UserData, user.Id.ToString()));
         claims.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
         return claims;
     }
