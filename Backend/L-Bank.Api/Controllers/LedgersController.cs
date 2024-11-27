@@ -28,7 +28,7 @@ namespace L_Bank.Api.Controllers
                 int.Parse(user.Claims.First(c => c.Type == ClaimTypes.UserData).Value)
             );
 
-            if (result.IsSuccess)
+            if (!result.IsSuccess)
             {
                 return Problem(
                     detail: result.Message,
@@ -54,7 +54,7 @@ namespace L_Bank.Api.Controllers
         {
             var result = await bankService.GetLedger(id);
 
-            if (result.IsSuccess)
+            if (!result.IsSuccess)
             {
                 return Problem(
                     detail: result.Message,

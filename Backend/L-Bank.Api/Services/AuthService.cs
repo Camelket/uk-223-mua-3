@@ -2,7 +2,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using L_Bank_W_Backend.Core.Models;
+using L_Bank_W_Backend.DbAccess.Repositories;
+using L_Bank_W_Backend.Interfaces;
+using L_Bank.Api.Dtos;
 using L_Bank.Api.Services;
+using L_Bank.Core.Helper;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,10 +15,12 @@ namespace L_Bank_W_Backend;
 public class AuthService : IAuthService
 {
     private readonly JwtSettings jwtSettings;
+    private readonly IEFUserRepository userRepository;
 
-    public AuthService(IOptions<JwtSettings> jwtSettings)
+    public AuthService(IOptions<JwtSettings> jwtSettings, IEFUserRepository userRepo)
     {
         this.jwtSettings = jwtSettings.Value;
+        this.userRepository = userRepo;
 
         if (string.IsNullOrWhiteSpace(this.jwtSettings.PrivateKey))
         {
@@ -61,5 +67,28 @@ public class AuthService : IAuthService
         claims.AddClaim(new Claim(ClaimTypes.UserData, user.Id.ToString()));
         claims.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
         return claims;
+    }
+
+    public async Task<DtoWrapper<LoginResponse>> Login(LoginRequest request)
+    {
+        {
+            var user = await userRepository.GetByUsername(request.Username);
+            if (user == null)
+            {
+                return DtoWrapper<LoginResponse>.WrapDto(
+                    ServiceStatus.Failed,
+                    "Unable to retrieve User"
+                );
+            }
+            var validPassword = PasswordHelper.VerifyPassword(request.Password, user);
+            if (validPassword)
+            {
+                return DtoWrapper<LoginResponse>.WrapDto(
+                    new LoginResponse() { Token = CreateJwt(user) },
+                    null
+                );
+            }
+            return DtoWrapper<LoginResponse>.WrapDto(ServiceStatus.Failed, "Invalid password");
+        }
     }
 }

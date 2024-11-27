@@ -14,7 +14,7 @@ public interface IUserRepository
 
 public interface IEFUserRepository
 {
-    Task<User?> Authenticate(string username, string password);
     Task<User?> GetOne(int id, bool includeLedgers = false);
     Task<User> Save(User user);
+    Task<User?> GetByUsername(string username);
 }

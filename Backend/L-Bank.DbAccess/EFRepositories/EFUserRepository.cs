@@ -10,15 +10,12 @@ public class EFUserRepository(AppDbContext context) : IEFUserRepository
 {
     private readonly AppDbContext context = context;
 
-    public async Task<User?> Authenticate(string username, string password)
+    public async Task<User?> GetByUsername(string username)
     {
-        var user = await context.Set<User>().AsNoTracking().FirstAsync(x => x.Username == username);
-        var validPassword = PasswordHelper.VerifyPassword(password, user);
-        if (validPassword)
-        {
-            return user;
-        }
-        return null;
+        return await context
+            .Set<User>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Username == username);
     }
 
     public async Task<User?> GetOne(int id, bool includeLedgers = false)
