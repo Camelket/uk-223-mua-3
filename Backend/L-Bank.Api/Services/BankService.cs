@@ -1,10 +1,9 @@
 using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.Interfaces;
-using L_Bank_W_Backend.DbAccess.Repositories;
 using L_Bank_W_Backend.Interfaces;
 using L_Bank.Api.Dtos;
 using L_Bank.Api.Helper;
-using Microsoft.Extensions.Configuration.UserSecrets;
+using Microsoft.EntityFrameworkCore;
 
 namespace L_Bank.Api.Services;
 
@@ -164,13 +163,24 @@ public class BankService(
 
     public async Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request)
     {
+        var strategy = bookingRepository.StartRetryExecution(5);
         try
         {
-            var booking = await bookingRepository.Book(
-                request.SourceId,
-                request.TargetId,
-                request.Amount
-            );
+            var booking = await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = bookingRepository.StartBookingTransaction();
+                var result = await _Book(request.SourceId, request.TargetId, request.Amount);
+
+                if (result == null)
+                {
+                    await transaction.RollbackAsync();
+                    return null;
+                }
+
+                await transaction.CommitAsync();
+                return result;
+            });
+
             if (booking != null)
             {
                 return DtoWrapper<BookingResponse>.WrapDto(
@@ -189,24 +199,37 @@ public class BankService(
         }
     }
 
-    Task<DtoWrapper<List<Booking>>> IBankService.GetAllBookings()
+    public async Task<Booking?> _Book(int sourceId, int targetId, decimal amount)
     {
-        throw new NotImplementedException();
-    }
+        var sourceLedger = await ledgerRepository.GetOne(sourceId);
+        var targetLedger = await ledgerRepository.GetOne(targetId);
 
-    Task<DtoWrapper<List<Booking>>> IBankService.GetBookingsForLedger(int ledgerId)
-    {
-        throw new NotImplementedException();
-    }
+        if (sourceLedger == null || targetLedger == null)
+        {
+            return null;
+        }
 
-    Task<DtoWrapper<List<Booking>>> IBankService.GetBookingsForUser(int userId)
-    {
-        throw new NotImplementedException();
-    }
+        if (sourceLedger.Balance < amount)
+        {
+            return null;
+        }
 
-    Task<DtoWrapper<Booking>> IBankService.NewBooking(BookingRequest request)
-    {
-        throw new NotImplementedException();
+        sourceLedger.Balance -= amount;
+        targetLedger.Balance += amount;
+
+        var booking = new Booking
+        {
+            Amount = amount,
+            SourceId = sourceLedger.Id,
+            DestinationId = targetLedger.Id,
+            Date = DateTime.Now,
+        };
+
+        await ledgerRepository.Save(sourceLedger);
+        await ledgerRepository.Save(targetLedger);
+        await bookingRepository.Save(booking);
+
+        return booking;
     }
 
     public async Task<bool> LedgerBelongsToUser(int ledgerId, int userId)

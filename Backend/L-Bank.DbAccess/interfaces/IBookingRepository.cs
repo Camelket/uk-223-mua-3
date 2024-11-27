@@ -1,4 +1,6 @@
 using L_Bank_W_Backend.Core.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace L_Bank_W_Backend.Interfaces;
 
@@ -9,9 +11,11 @@ public interface IBookingRepository
 
 public interface IEFBookingRepository
 {
-    Task<Booking?> Book(int sourceId, int targetId, decimal amount);
     Task<IEnumerable<Booking>> GetAllBookings();
     Task<Booking?> GetOne(int bookingId);
     Task<IEnumerable<Booking>> GetByLedger(int ledgerId);
     Task<IEnumerable<Booking>> GetbyUser(int userId);
+    SqlServerRetryingExecutionStrategy StartRetryExecution(int maxRetry);
+    IDbContextTransaction StartBookingTransaction();
+    Task<Booking> Save(Booking booking);
 }
