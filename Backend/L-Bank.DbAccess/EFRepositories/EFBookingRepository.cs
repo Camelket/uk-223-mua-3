@@ -1,7 +1,8 @@
-using System;
+using System.Data;
 using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.Interfaces;
 using L_Bank_W_Backend.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace L_Bank_W_Backend.DbAccess.EFRepositories;
@@ -9,7 +10,7 @@ namespace L_Bank_W_Backend.DbAccess.EFRepositories;
 public class EFBookingRepository(
     AppDbContext context,
     IEFLedgerRepository ledgerRepository,
-    ILogger logger
+    ILogger<EFBookingRepository> logger
 ) : IEFBookingRepository
 {
     private readonly AppDbContext context = context;
@@ -18,7 +19,7 @@ public class EFBookingRepository(
 
     async Task<bool> IEFBookingRepository.Book(int sourceId, int targetId, decimal amount)
     {
-        context.Database.BeginTransaction();
+        context.Database.BeginTransaction(IsolationLevel.Serializable);
         var sourceLedger = await ledgerRepository.GetOne(sourceId);
         var targetLedger = await ledgerRepository.GetOne(targetId);
         if (sourceLedger == null || targetLedger == null)
