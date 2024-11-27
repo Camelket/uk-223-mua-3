@@ -21,9 +21,20 @@ public class EFUserRepository(AppDbContext context) : IEFUserRepository
         return null;
     }
 
-    public async Task<User?> GetOne(int id)
+    public async Task<User?> GetOne(int id, bool includeLedgers = false)
     {
-        return await context.Set<User>().AsNoTracking().FirstAsync(x => x.Id == id);
+        if (includeLedgers)
+        {
+            return await context
+                .Set<User>()
+                .Include(x => x.Ledgers)
+                .AsNoTracking()
+                .FirstAsync(x => x.Id == id);
+        }
+        else
+        {
+            return await context.Set<User>().AsNoTracking().FirstAsync(x => x.Id == id);
+        }
     }
 
     public async Task<User> Save(User user)
