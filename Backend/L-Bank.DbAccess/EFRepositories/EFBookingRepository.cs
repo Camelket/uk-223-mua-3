@@ -49,14 +49,14 @@ public class EFBookingRepository(
 
     async Task<Booking?> IEFBookingRepository.Book(int sourceId, int targetId, decimal amount)
     {
-        var strategy = context.Database.CreateExecutionStrategy();
-
-        return await strategy.Execute(async () =>
+        var strategy = new SqlServerRetryingExecutionStrategy(context, 5);
+        return await strategy.ExecuteAsync(async () =>
         {
             using var transaction = context.Database.BeginTransaction(IsolationLevel.Serializable);
 
             var sourceLedger = await ledgerRepository.GetOne(sourceId);
             var targetLedger = await ledgerRepository.GetOne(targetId);
+
             if (sourceLedger == null || targetLedger == null)
             {
                 context.Database.RollbackTransaction();
