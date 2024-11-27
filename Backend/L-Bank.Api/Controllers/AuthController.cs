@@ -12,6 +12,11 @@ namespace L_Bank.Api.Controllers
     {
         private readonly IAuthService authService;
 
+        public AuthController(IAuthService authService)
+        {
+            this.authService = authService;
+        }
+
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
         {

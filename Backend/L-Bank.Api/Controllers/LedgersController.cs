@@ -36,16 +36,8 @@ namespace L_Bank.Api.Controllers
                     title: "Error"
                 );
             }
-            var ledgers = result
-                .Data?.Ledgers.Select(l => new LedgerResponse
-                {
-                    Id = l.Id,
-                    Name = l.Name,
-                    Balance = l.Balance,
-                })
-                .ToList();
 
-            return Ok(ledgers);
+            return Ok(result.Data.Ledgers);
         }
 
         [HttpGet("{id}")]
@@ -89,20 +81,10 @@ namespace L_Bank.Api.Controllers
                     title: "Error"
                 );
             }
-
-            var ledgers = result
-                .Data.Select(l => new LedgerResponse
-                {
-                    Id = l.Id,
-                    Name = l.Name,
-                    Balance = l.Balance,
-                })
-                .ToList();
-
-            return Ok(ledgers);
+            return Ok(result.Data);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<LedgerResponse>> NewLedger(LedgerRequest request)
         {
@@ -119,20 +101,10 @@ namespace L_Bank.Api.Controllers
                     title: "Error"
                 );
             }
-
-            var ledger = result.Data;
-
-            return Ok(
-                new LedgerResponse
-                {
-                    Id = ledger.Id,
-                    Name = ledger.Name,
-                    Balance = ledger.Balance,
-                }
-            );
+            return Ok(result.Data);
         }
 
-        [HttpPut("{userId}")]
+        [HttpPost("{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<LedgerResponse>> NewLedger(LedgerRequest request, int userId)
         {
@@ -147,16 +119,7 @@ namespace L_Bank.Api.Controllers
                 );
             }
 
-            var ledger = result.Data;
-
-            return Ok(
-                new LedgerResponse
-                {
-                    Id = ledger.Id,
-                    Name = ledger.Name,
-                    Balance = ledger.Balance,
-                }
-            );
+            return Ok(result.Data);
         }
 
         [HttpGet("{ledgerId}/bookings")]
