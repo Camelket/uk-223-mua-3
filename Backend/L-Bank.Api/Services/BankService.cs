@@ -3,6 +3,7 @@ using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.Interfaces;
 using L_Bank_W_Backend.Interfaces;
 using L_Bank.Api.Dtos;
+using L_Bank.Api.Helper;
 
 namespace L_Bank.Api.Services;
 
@@ -16,44 +17,109 @@ public class BankService(
     private readonly IEFUserRepository userRepository = userRepository;
     private readonly IEFLedgerRepository ledgerRepository = ledgerRepository;
 
-    public Task<DtoWrapper<List<Booking>>> GetAllBookings()
+    public Task<DtoWrapper<List<BookingResponse>>> GetAllBookings()
     {
         throw new NotImplementedException();
     }
 
     public async Task<DtoWrapper<List<LedgerResponse>>> GetAllLedgers()
     {
-        var ledgers = await ledgerRepository.GetAllLedgers();
-        
-        throw new NotImplementedException();
+        try
+        {
+            var ledgers = await ledgerRepository.GetAllLedgers();
+            return DtoWrapper<List<LedgerResponse>>.WrapDto(
+                ledgers.Select(x => DtoMapper.ToLedgerResponse(x)).ToList(),
+                null
+            );
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<List<LedgerResponse>>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
+        }
     }
 
-    public Task<DtoWrapper<BookingResponse>> GetBooking(int bookingId)
+    public async Task<DtoWrapper<BookingResponse>> GetBooking(int bookingId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var booking = await bookingRepository.
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 
-    public Task<DtoWrapper<List<Booking>>> GetBookingsForLedger(int ledgerId)
+    public async Task<DtoWrapper<List<BookingResponse>>> GetBookingsForLedger(int ledgerId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var bookings = await bookingRepository.GetByLedger(ledgerId);
+            return DtoWrapper<List<BookingResponse>>.WrapDto(
+                bookings.Select(x => DtoMapper.ToBookingResponse(x)).ToList(),
+                null
+            );
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<List<BookingResponse>>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
+        }
     }
 
-    public Task<DtoWrapper<List<Booking>>> GetBookingsForUser(int userId)
+    public async Task<DtoWrapper<List<BookingResponse>>> GetBookingsForUser(int userId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var bookings = await bookingRepository.GetbyUser(userId);
+            return DtoWrapper<List<BookingResponse>>.WrapDto(
+                bookings.Select(x => DtoMapper.ToBookingResponse(x)).ToList(),
+                null
+            );
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<List<BookingResponse>>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
+        }
     }
 
-    public Task<DtoWrapper<LedgerResponse>> GetLedger(int ledgerId)
+    public async Task<DtoWrapper<LedgerResponse>> GetLedger(int ledgerId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var ledger = await ledgerRepository.GetOne(ledgerId);
+            if (ledger != null)
+            {
+                return DtoWrapper<LedgerResponse>.WrapDto(DtoMapper.ToLedgerResponse(ledger), null);
+            }
+            return DtoWrapper<LedgerResponse>.WrapDto(
+                ServiceStatus.NotFound,
+                "Ledger doesnt exist"
+            );
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<LedgerResponse>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
+        }
     }
 
-    public Task<DtoWrapper<UserResponse>> GetUser(int userId)
+    public async Task<DtoWrapper<UserResponse>> GetUserWithLedgers(int userId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var user = await userRepository.GetOne(userId, true);
+            if (user != null)
+            {
+                return DtoWrapper<UserResponse>.WrapDto(DtoMapper.ToUserResponse(user), null);
+            }
+            return DtoWrapper<UserResponse>.WrapDto(ServiceStatus.NotFound, "User doesnt exist");
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<UserResponse>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
+        }
     }
 
-    public Task<DtoWrapper<Booking>> NewBooking(BookingRequest request)
+    public Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request)
     {
         throw new NotImplementedException();
     }

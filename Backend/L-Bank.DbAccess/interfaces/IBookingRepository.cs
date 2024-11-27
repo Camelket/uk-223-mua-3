@@ -1,3 +1,5 @@
+using L_Bank_W_Backend.Core.Models;
+
 namespace L_Bank_W_Backend.Interfaces;
 
 public interface IBookingRepository
@@ -8,4 +10,7 @@ public interface IBookingRepository
 public interface IEFBookingRepository
 {
     Task<bool> Book(int sourceId, int targetId, decimal amount);
+    Task<Booking?> GetOne(int bookingId);
+    Task<IEnumerable<Booking>> GetByLedger(int ledgerId);
+    Task<IEnumerable<Booking>> GetbyUser(int userId);
 }

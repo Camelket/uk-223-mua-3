@@ -17,6 +17,29 @@ public class EFBookingRepository(
     private readonly ILogger _logger = logger;
     private readonly IEFLedgerRepository ledgerRepository = ledgerRepository;
 
+    public async Task<IEnumerable<Booking>> GetByLedger(int ledgerId)
+    {
+        return await context
+            .Set<Booking>()
+            .Where(x => x.SourceId == ledgerId || x.DestinationId == ledgerId)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Booking>> GetbyUser(int userId)
+    {
+        return await context
+            .Set<Booking>()
+            .Include(x => x.Source)
+            .Include(x => x.Destination)
+            .Where(x => x.Source.UserId == userId || x.Destination.UserId == userId)
+            .ToListAsync();
+    }
+
+    public async Task<Booking?> GetOne(int bookingId)
+    {
+        // return await context.Set<Booking>().FindAsync(bookingId);
+    }
+
     async Task<bool> IEFBookingRepository.Book(int sourceId, int targetId, decimal amount)
     {
         context.Database.BeginTransaction(IsolationLevel.Serializable);
