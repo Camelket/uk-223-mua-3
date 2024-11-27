@@ -1,21 +1,17 @@
 using System.Data;
 using L_Bank_W_Backend.Core.Models;
-using L_Bank_W_Backend.DbAccess.Interfaces;
 using L_Bank_W_Backend.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
 namespace L_Bank_W_Backend.DbAccess.EFRepositories;
 
-public class EFBookingRepository(
-    AppDbContext context,
-    IEFLedgerRepository ledgerRepository,
-    ILogger<EFBookingRepository> logger
-) : IEFBookingRepository
+public class EFBookingRepository(AppDbContext context, ILogger<EFBookingRepository> logger)
+    : IEFBookingRepository
 {
     private readonly AppDbContext context = context;
     private readonly ILogger _logger = logger;
-    private readonly IEFLedgerRepository ledgerRepository = ledgerRepository;
 
     public async Task<IEnumerable<Booking>> GetAllBookings()
     {
@@ -47,48 +43,20 @@ public class EFBookingRepository(
         return await context.Set<Booking>().AsNoTracking().FirstAsync(x => x.Id == bookingId);
     }
 
-    async Task<Booking?> IEFBookingRepository.Book(int sourceId, int targetId, decimal amount)
+    public SqlServerRetryingExecutionStrategy StartRetryExecution(int maxRetry)
     {
-        var strategy = new SqlServerRetryingExecutionStrategy(context, 5);
-        return await strategy.ExecuteAsync(async () =>
-        {
-            using var transaction = context.Database.BeginTransaction(IsolationLevel.Serializable);
+        return new SqlServerRetryingExecutionStrategy(context, maxRetry);
+    }
 
-            var sourceLedger = await ledgerRepository.GetOne(sourceId);
-            var targetLedger = await ledgerRepository.GetOne(targetId);
+    public IDbContextTransaction StartBookingTransaction()
+    {
+        return context.Database.BeginTransaction(IsolationLevel.Serializable);
+    }
 
-            if (sourceLedger == null || targetLedger == null)
-            {
-                context.Database.RollbackTransaction();
-                return null;
-            }
-
-            if (sourceLedger.Balance < amount)
-            {
-                context.Database.RollbackTransaction();
-                _logger.LogDebug("Not enough money in source ledger");
-                return null;
-            }
-
-            sourceLedger.Balance -= amount;
-            targetLedger.Balance += amount;
-
-            var booking = new Booking
-            {
-                Amount = amount,
-                SourceId = sourceLedger.Id,
-                DestinationId = targetLedger.Id,
-                Date = DateTime.Now,
-            };
-
-            context.Set<Booking>().Add(booking);
-            await ledgerRepository.Save(sourceLedger);
-            await ledgerRepository.Save(targetLedger);
-
-            await context.SaveChangesAsync();
-
-            await transaction.CommitAsync();
-            return booking;
-        });
+    public async Task<Booking> Save(Booking booking)
+    {
+        context.Add(booking);
+        await context.SaveChangesAsync();
+        return booking;
     }
 }
