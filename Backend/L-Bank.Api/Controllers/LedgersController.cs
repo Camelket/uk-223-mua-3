@@ -8,7 +8,6 @@ namespace L_Bank.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "User")]
     public class LedgersController(IBankService bankService) : ControllerBase
     {
         private readonly IBankService bankService = bankService;
