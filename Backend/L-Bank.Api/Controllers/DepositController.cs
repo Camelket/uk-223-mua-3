@@ -40,8 +40,22 @@ namespace L_Bank.Api.Controllers
                 HttpContext.User.Claims.First(c => c.Type == ClaimTypes.UserData).Value
             );
 
+            if (!HttpContext.User.IsInRole("Admin"))
+            {
+                var userIsOwner = await bankService.LedgerBelongsToUser(
+                    depositRequest.ledgerId,
+                    requestorId
+                );
+
+                if (!userIsOwner)
+                {
+                    return Forbid();
+                }
+            }
+
             var result = await bankService.MakeDeposit(depositRequest, requestorId);
-            if (result.Status == ServiceStatus.Success)
+
+            if (result.IsSuccess)
             {
                 return result.Data;
             }
@@ -55,16 +69,24 @@ namespace L_Bank.Api.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        [Authorize(Roles = "Admin, User")]
-        public async Task<ActionResult<List<DepositResponse>>> GetDepositsByLedger(int id) { }
-
         [HttpGet]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<List<DepositResponse>>> GetDepositsOfUser()
         {
             var requestorId = int.Parse(
                 HttpContext.User.Claims.First(c => c.Type == ClaimTypes.UserData).Value
+            );
+
+            var result = await bankService.GetDepositsByUser(requestorId);
+
+            if (result.IsSuccess)
+            {
+                return result.Data;
+            }
+            return Problem(
+                detail: result.Message,
+                statusCode: ServiceStatusUtil.Map(result.Status),
+                title: "Error"
             );
         }
     }

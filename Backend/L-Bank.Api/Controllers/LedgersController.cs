@@ -137,6 +137,30 @@ namespace L_Bank.Api.Controllers
             );
         }
 
+        [HttpGet("/{ledgerId}/deposits")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<List<DepositResponse>>> GetDepositsByLedger(int ledgerId)
+        {
+            var requestorId = int.Parse(
+                HttpContext.User.Claims.First(c => c.Type == ClaimTypes.UserData).Value
+            );
+            var isOwnerOf = await bankService.LedgerBelongsToUser(ledgerId, requestorId);
+            if (isOwnerOf)
+            {
+                var result = await bankService.GetDepositsForLedger(ledgerId);
+                if (result.IsSuccess)
+                {
+                    return result.Data;
+                }
+                return Problem(
+                    detail: result.Message,
+                    statusCode: ServiceStatusUtil.Map(result.Status),
+                    title: "Error"
+                );
+            }
+            return Forbid();
+        }
+
         [HttpPost("users/{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<LedgerResponse>> NewLedger(LedgerRequest request, int userId)
