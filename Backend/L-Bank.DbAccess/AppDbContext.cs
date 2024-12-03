@@ -1,4 +1,5 @@
 using L_Bank_W_Backend.Core.Models;
+using L_Bank.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace L_Bank_W_Backend.DbAccess;
@@ -8,6 +9,23 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Deposit>(e =>
+        {
+            e.HasKey(e => e.Id);
+
+            e.HasOne(e => e.Ledger)
+                .WithMany(e => e.Deposits)
+                .HasForeignKey(e => e.LedgerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(e => e.Depositor)
+                .WithMany()
+                .HasForeignKey(e => e.DepositorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.ToTable("Deposits");
+        });
 
         modelBuilder.Entity<Ledger>(e =>
         {

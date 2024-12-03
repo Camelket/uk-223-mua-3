@@ -33,7 +33,7 @@ public class EFLedgerRepository(AppDbContext context) : IEFLedgerRepository
         {
             context.Add(ledger);
         }
-        
+
         await context.SaveChangesAsync();
         return ledger;
     }

@@ -2,6 +2,7 @@ using System.Text;
 using L_Bank_W_Backend.DbAccess;
 using L_Bank_W_Backend.DbAccess.EFRepositories;
 using L_Bank_W_Backend.DbAccess.Interfaces;
+using L_Bank_W_Backend.DbAccess.interfaces;
 using L_Bank_W_Backend.Interfaces;
 using L_Bank.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -87,6 +88,7 @@ namespace L_Bank_W_Backend
             builder.Services.AddTransient<IEFLedgerRepository, EFLedgerRepository>();
             builder.Services.AddTransient<IEFUserRepository, EFUserRepository>();
             builder.Services.AddTransient<IEFBookingRepository, EFBookingRepository>();
+            builder.Services.AddTransient<IEFDepositRepository, EFDepositRepository>();
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<IBankService, BankService>();
 

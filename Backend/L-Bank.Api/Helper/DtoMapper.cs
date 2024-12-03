@@ -1,11 +1,22 @@
 using System;
 using L_Bank_W_Backend.Core.Models;
 using L_Bank.Api.Dtos;
+using L_Bank.Core.Models;
 
 namespace L_Bank.Api.Helper;
 
 public static class DtoMapper
 {
+    public static DepositResponse ToDepositResponse(Deposit deposit)
+    {
+        return new DepositResponse()
+        {
+            amount = deposit.Amount,
+            date = deposit.date,
+            ledgerId = deposit.LedgerId,
+        };
+    }
+
     public static LedgerResponse ToLedgerResponse(Ledger ledger)
     {
         return new LedgerResponse()

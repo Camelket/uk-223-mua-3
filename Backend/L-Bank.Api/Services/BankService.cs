@@ -1,8 +1,12 @@
+using System.Runtime.CompilerServices;
 using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.Interfaces;
+using L_Bank_W_Backend.DbAccess.interfaces;
 using L_Bank_W_Backend.Interfaces;
 using L_Bank.Api.Dtos;
 using L_Bank.Api.Helper;
+using L_Bank.Core.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
 namespace L_Bank.Api.Services;
@@ -18,6 +22,7 @@ public class BankService(
     IEFBookingRepository bookingRepository,
     IEFUserRepository userRepository,
     IEFLedgerRepository ledgerRepository,
+    IEFDepositRepository depositRepository,
     ILogger<BankService> logger
 ) : IBankService
 {
@@ -25,6 +30,8 @@ public class BankService(
     private readonly IEFBookingRepository bookingRepository = bookingRepository;
     private readonly IEFUserRepository userRepository = userRepository;
     private readonly IEFLedgerRepository ledgerRepository = ledgerRepository;
+
+    private readonly IEFDepositRepository depositRepository = depositRepository;
 
     public async Task<DtoWrapper<LedgerResponse>> NewLedger(LedgerRequest request, int userId)
     {
@@ -307,5 +314,161 @@ public class BankService(
                 $"{ex.Message}"
             );
         }
+    }
+
+    public async Task<DtoWrapper<List<DepositResponse>>> GetAllDeposits()
+    {
+        var deposits = await depositRepository.GetAllDeposits();
+        return DtoWrapper<List<DepositResponse>>.WrapDto(
+            deposits.Select(x => DtoMapper.ToDepositResponse(x)).ToList(),
+            null
+        );
+    }
+
+    public async Task<DtoWrapper<List<DepositResponse>>> GetDepositsForLedger(int ledgerId)
+    {
+        var deposits = await depositRepository.GetDepositsByLedger(ledgerId);
+        return DtoWrapper<List<DepositResponse>>.WrapDto(
+            deposits.Select(x => DtoMapper.ToDepositResponse(x)).ToList(),
+            null
+        );
+    }
+
+    public async Task<DtoWrapper<DepositResponse>> MakeDeposit(DepositRequest request, int userId)
+    {
+        var userIsOwner = await LedgerBelongsToUser(request.ledgerId, userId);
+        if (userIsOwner)
+        {
+            if (request.amount < 0)
+            {
+                return await _MakeWithdrawl(request, userId);
+            }
+            else
+            {
+                return await _MakeDeposit(request, userId);
+            }
+        }
+        return DtoWrapper<DepositResponse>.WrapDto(
+            ServiceStatus.BadRequest,
+            "Not your Ledger scrub"
+        );
+    }
+
+    private async Task<DtoWrapper<DepositResponse>> _MakeDeposit(DepositRequest request, int userId)
+    {
+        var strategy = bookingRepository.StartRetryExecution(5);
+        try
+        {
+            var transactionResult = await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = bookingRepository.StartBookingTransaction();
+                var ledger = await ledgerRepository.GetOne(request.ledgerId);
+                if (ledger == null)
+                {
+                    return new DtoWrapper<DepositResponse>()
+                    {
+                        Status = ServiceStatus.BadRequest,
+                        Message = "Ledger doesnt exist",
+                    };
+                }
+                else
+                {
+                    ledger.Balance += request.amount;
+                    var resultLedger = await ledgerRepository.Save(ledger);
+                    var deposit = await depositRepository.Save(
+                        new Deposit()
+                        {
+                            LedgerId = resultLedger.Id,
+                            DepositorId = userId,
+                            Amount = request.amount,
+                            date = DateTime.Now,
+                        }
+                    );
+                    await transaction.CommitAsync();
+                    return new DtoWrapper<DepositResponse>()
+                    {
+                        Status = ServiceStatus.Success,
+                        Data = DtoMapper.ToDepositResponse(deposit),
+                        Message = "Success",
+                    };
+                }
+            });
+        }
+        catch (Exception)
+        {
+            return DtoWrapper<DepositResponse>.WrapDto(
+                ServiceStatus.TransactionFailed,
+                "Transaction was unable to complete - Withdrawl not recorded"
+            );
+        }
+        return DtoWrapper<DepositResponse>.WrapDto(
+            ServiceStatus.Failed,
+            "Transaction failed for unknown reason"
+        );
+    }
+
+    private async Task<DtoWrapper<DepositResponse>> _MakeWithdrawl(
+        DepositRequest request,
+        int userId
+    )
+    {
+        var strategy = bookingRepository.StartRetryExecution(5);
+        try
+        {
+            var transactionResult = await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = bookingRepository.StartBookingTransaction();
+                var ledger = await ledgerRepository.GetOne(request.ledgerId);
+                if (ledger == null)
+                {
+                    return new DtoWrapper<DepositResponse>()
+                    {
+                        Status = ServiceStatus.BadRequest,
+                        Message = "Ledger doesnt exist",
+                    };
+                }
+                if (ledger.Balance < request.amount)
+                {
+                    await transaction.RollbackAsync();
+                    return new DtoWrapper<DepositResponse>()
+                    {
+                        Status = ServiceStatus.BadRequest,
+                        Message = "Insufficient balance for withdrawal",
+                    };
+                }
+                else
+                {
+                    ledger.Balance += request.amount;
+                    var resultLedger = await ledgerRepository.Save(ledger);
+                    var deposit = await depositRepository.Save(
+                        new Deposit()
+                        {
+                            LedgerId = resultLedger.Id,
+                            DepositorId = userId,
+                            Amount = request.amount,
+                            date = DateTime.Now,
+                        }
+                    );
+                    await transaction.CommitAsync();
+                    return new DtoWrapper<DepositResponse>()
+                    {
+                        Status = ServiceStatus.Success,
+                        Data = DtoMapper.ToDepositResponse(deposit),
+                        Message = "Success",
+                    };
+                }
+            });
+        }
+        catch (Exception)
+        {
+            return DtoWrapper<DepositResponse>.WrapDto(
+                ServiceStatus.TransactionFailed,
+                "Transaction was unable to complete - Withdrawl not recorded"
+            );
+        }
+        return DtoWrapper<DepositResponse>.WrapDto(
+            ServiceStatus.Failed,
+            "Transaction failed for unknown reason"
+        );
     }
 }

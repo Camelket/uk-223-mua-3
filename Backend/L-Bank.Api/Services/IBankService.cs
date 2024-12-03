@@ -22,4 +22,8 @@ public interface IBankService
 
     Task<bool> LedgerBelongsToUser(int ledgerId, int userId);
     Task<bool> BookingBelongsToUser(int bookingId, int userId);
+
+    Task<DtoWrapper<List<DepositResponse>>> GetAllDeposits();
+    Task<DtoWrapper<List<DepositResponse>>> GetDepositsForLedger(int ledgerId);
+    Task<DtoWrapper<DepositResponse>> MakeDeposit(DepositRequest request, int userId);
 }
