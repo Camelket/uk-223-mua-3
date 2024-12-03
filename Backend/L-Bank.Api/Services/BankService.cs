@@ -396,12 +396,12 @@ public class BankService(
         {
             return new DepositTransactionResult()
             {
-                status = ServiceStatus.BadRequest,
+                status = ServiceStatus.NotFound,
                 message = "Ledger doesnt exist",
                 deposit = null,
             };
         }
-        if (request.Amount < 0 && ledger.Balance < request.Amount)
+        if (request.Amount < 0 && ledger.Balance < Math.Abs(request.Amount))
         {
             return new DepositTransactionResult()
             {
