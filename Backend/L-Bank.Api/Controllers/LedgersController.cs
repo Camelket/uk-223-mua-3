@@ -37,12 +37,12 @@ namespace L_Bank.Api.Controllers
 
         [HttpGet("names")]
         [Authorize(Roles = "Admin, User")]
-        public async Task<ActionResult<List<string>>> GetAllLedgerNames()
+        public async Task<ActionResult<List<SimpleLedgerResponse>>> GetAllLedgersInSimpleForm()
         {
-            var result = await bankService.GetAllLedgers();
+            var result = await bankService.GetAllLedgersInSimpleForm();
             if (result.IsSuccess)
             {
-                return Ok(result.Data.Select(l => l.Name).ToList());
+                return Ok(result.Data);
             }
 
             return Problem(

@@ -247,4 +247,23 @@ public class BankService(
         }
         return false;
     }
+
+    public async Task<DtoWrapper<List<SimpleLedgerResponse>>> GetAllLedgersInSimpleForm()
+    {
+        try
+        {
+            var ledgers = await ledgerRepository.GetAllLedgers();
+            return DtoWrapper<List<SimpleLedgerResponse>>.WrapDto(
+                ledgers.Select(x => DtoMapper.ToSimpleLedgerResponse(x)).ToList(),
+                null
+            );
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<List<SimpleLedgerResponse>>.WrapDto(
+                ServiceStatus.Failed,
+                $"{ex.Message}"
+            );
+        }
+    }
 }

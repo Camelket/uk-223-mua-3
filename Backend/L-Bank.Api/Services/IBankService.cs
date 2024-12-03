@@ -9,6 +9,7 @@ public interface IBankService
 
     Task<DtoWrapper<LedgerResponse>> GetLedger(int ledgerId);
     Task<DtoWrapper<List<LedgerResponse>>> GetAllLedgers();
+    Task<DtoWrapper<List<SimpleLedgerResponse>>> GetAllLedgersInSimpleForm();
 
     Task<DtoWrapper<List<BookingResponse>>> GetAllBookings();
     Task<DtoWrapper<BookingResponse>> GetBooking(int bookingId);

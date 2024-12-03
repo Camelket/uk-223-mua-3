@@ -17,6 +17,11 @@ public static class DtoMapper
         };
     }
 
+    public static SimpleLedgerResponse ToSimpleLedgerResponse(Ledger ledger)
+    {
+        return new SimpleLedgerResponse() { Id = ledger.Id, Name = ledger.Name };
+    }
+
     public static UserResponse ToUserResponse(User user)
     {
         return new UserResponse()
