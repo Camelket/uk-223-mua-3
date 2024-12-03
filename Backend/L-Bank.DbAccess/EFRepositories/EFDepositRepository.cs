@@ -1,4 +1,5 @@
 using System;
+using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.interfaces;
 using L_Bank.Core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,16 @@ public class EFDepositRepository(AppDbContext context) : IEFDepositRepository
     public async Task<IEnumerable<Deposit>> GetAllDeposits()
     {
         return await context.Set<Deposit>().AsNoTracking().ToListAsync();
+    }
+
+    public async Task<IEnumerable<Deposit>> GetDepositsByUser(int userId)
+    {
+        return await context
+            .Set<Deposit>()
+            .AsNoTracking()
+            .Include(x => x.Ledger)
+            .Where(x => x.DepositorId == userId)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Deposit>> GetDepositsByLedger(int ledgerId)

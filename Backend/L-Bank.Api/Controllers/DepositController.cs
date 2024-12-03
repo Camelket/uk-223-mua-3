@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Azure.Core;
 using L_Bank.Api.Dtos;
 using L_Bank.Api.Services;
@@ -9,11 +10,11 @@ namespace L_Bank.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DepositsController(BankService bankService) : ControllerBase
+    public class DepositsController(IBankService bankService) : ControllerBase
     {
-        private readonly BankService bankService = bankService;
+        private readonly IBankService bankService = bankService;
 
-        [HttpGet()]
+        [HttpGet("/all")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<DepositResponse>>> GetAllDeposits()
         {
@@ -26,6 +27,44 @@ namespace L_Bank.Api.Controllers
                 detail: deposits.Message,
                 statusCode: ServiceStatusUtil.Map(deposits.Status),
                 title: "Error"
+            );
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<DepositResponse>> MakeDeposit(
+            [FromBody] DepositRequest depositRequest
+        )
+        {
+            var requestorId = int.Parse(
+                HttpContext.User.Claims.First(c => c.Type == ClaimTypes.UserData).Value
+            );
+
+            var result = await bankService.MakeDeposit(depositRequest, requestorId);
+            if (result.Status == ServiceStatus.Success)
+            {
+                return result.Data;
+            }
+            else
+            {
+                return Problem(
+                    detail: result.Message,
+                    statusCode: ServiceStatusUtil.Map(result.Status),
+                    title: "Error"
+                );
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<List<DepositResponse>>> GetDepositsByLedger(int id) { }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<List<DepositResponse>>> GetDepositsOfUser()
+        {
+            var requestorId = int.Parse(
+                HttpContext.User.Claims.First(c => c.Type == ClaimTypes.UserData).Value
             );
         }
     }

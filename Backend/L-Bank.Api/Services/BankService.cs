@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
 using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.Interfaces;
 using L_Bank_W_Backend.DbAccess.interfaces;
@@ -393,6 +394,7 @@ public class BankService(
                     };
                 }
             });
+            return transactionResult;
         }
         catch (Exception)
         {
@@ -401,10 +403,6 @@ public class BankService(
                 "Transaction was unable to complete - Withdrawl not recorded"
             );
         }
-        return DtoWrapper<DepositResponse>.WrapDto(
-            ServiceStatus.Failed,
-            "Transaction failed for unknown reason"
-        );
     }
 
     private async Task<DtoWrapper<DepositResponse>> _MakeWithdrawl(
@@ -458,6 +456,7 @@ public class BankService(
                     };
                 }
             });
+            return transactionResult;
         }
         catch (Exception)
         {
@@ -466,9 +465,14 @@ public class BankService(
                 "Transaction was unable to complete - Withdrawl not recorded"
             );
         }
-        return DtoWrapper<DepositResponse>.WrapDto(
-            ServiceStatus.Failed,
-            "Transaction failed for unknown reason"
+    }
+
+    public async Task<DtoWrapper<List<DepositResponse>>> GetDepositsByUser(int userId)
+    {
+        var result = await depositRepository.GetDepositsByUser(userId);
+        return DtoWrapper<List<DepositResponse>>.WrapDto(
+            result.Select(DtoMapper.ToDepositResponse).ToList(),
+            null
         );
     }
 }

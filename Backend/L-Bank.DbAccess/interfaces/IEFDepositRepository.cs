@@ -8,6 +8,7 @@ public interface IEFDepositRepository
     Task<IEnumerable<Deposit>> GetAllDeposits();
 
     Task<IEnumerable<Deposit>> GetDepositsByLedger(int ledgerId);
+    Task<IEnumerable<Deposit>> GetDepositsByUser(int userId);
 
     Task<Deposit> Save(Deposit deposit);
 }
