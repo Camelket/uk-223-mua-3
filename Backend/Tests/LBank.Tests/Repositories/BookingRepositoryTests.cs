@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 using Moq;
-using L-Bank.Api.Services;
-using L-Bank.Api.Dtos;
+using L_Bank.Api.Services;
+using L_Bank.Api.Dtos;
 
 namespace LBank.Tests
 {
@@ -22,15 +22,18 @@ namespace LBank.Tests
             // Arrange
             var bookingRequest = new BookingRequest
             {
-                LedgerId = 1,
-                Amount = 100,
-                Description = "Test Booking"
-            };
+                SourceId = 1,
+                TargetId = 2,
+                Amount = 100
 
+            };
+            
             var bookingResponse = new BookingResponse
             {
-                BookingId = 1,
-                Status = "Success"
+                SourceId = 1,
+                TargetId = 2,
+                TransferedAmount = 1000
+
             };
 
             _bankServiceMock.Setup(service => service.NewBooking(bookingRequest))
@@ -43,7 +46,7 @@ namespace LBank.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("Success", result.Data.Status);
+            Assert.Equal(1000, result.Data.TransferedAmount);
         }
 
         [Fact]
@@ -52,9 +55,10 @@ namespace LBank.Tests
             // Arrange
             var bookingRequest = new BookingRequest
             {
-                LedgerId = 1,
-                Amount = 1000, // Assuming 1000 exceeds available funds
-                Description = "Test Booking"
+                SourceId = 1,
+                TargetId = 2,
+                Amount = 1000 // Assuming 1000 exceeds available funds
+               
             };
 
             _bankServiceMock.Setup(service => service.NewBooking(bookingRequest))
