@@ -35,6 +35,23 @@ namespace L_Bank.Api.Controllers
             );
         }
 
+        [HttpGet("names")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<List<string>>> GetAllLedgerNames()
+        {
+            var result = await bankService.GetAllLedgers();
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data.Select(l => l.Name).ToList());
+            }
+
+            return Problem(
+                detail: result.Message,
+                statusCode: ServiceStatusUtil.Map(result.Status),
+                title: "Error"
+            );
+        }
+
         [HttpGet("all")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<LedgerResponse>>> GetAllLedgers()
