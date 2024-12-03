@@ -2,12 +2,13 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { LedgerComponent } from './ledger/ledger.component';
 import { AuthGuard } from './auth.guard';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 export const routes: Routes = [
     {
-      path: 'ledgers',
-      component: LedgerComponent,
-      canActivate: [AuthGuard], // Protect this route
+      path: 'dashboard',
+      component: DashboardComponent,
+      canActivate: [AuthGuard],
     },
     {
       path: 'login',

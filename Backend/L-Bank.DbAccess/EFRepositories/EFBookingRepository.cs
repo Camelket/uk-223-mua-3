@@ -68,7 +68,7 @@ public class EFBookingRepository(AppDbContext context, ILogger<EFBookingReposito
 
     public async Task<Booking> Save(Booking booking)
     {
-        if (booking.Id != 0)
+        if (booking.Id == 0)
         {
             context.Update(booking);
         }

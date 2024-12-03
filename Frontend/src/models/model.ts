@@ -17,7 +17,7 @@ export interface Booking {
   targetId: number;
   targetName: string;
   transferedAmount: number;
-  date: Date;
+  date: string;
 }
 
 export interface Login {

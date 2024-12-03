@@ -1,0 +1,12 @@
+<div style="display: flex; flex-direction: row">
+  <div style="flex-basis: 1; width: 50%;">
+    <app-ledger-overview [myLedgers]="myLedgers" />
+    <app-transaction-history [myBookings]="myBookings" />
+  </div>
+
+  <app-transaction-form
+    [myOptions]="myLedgers"
+    (onTransaction)="reload()"
+    style="flex-basis: 1;"
+  />
+</div>

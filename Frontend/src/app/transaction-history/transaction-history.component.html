@@ -1,0 +1,11 @@
+<div>
+  <h2>Transaction History</h2>
+  <ul>
+    @for (booking of mySortedBookings(); track booking.id) {
+    <li>
+      {{ formatDate(booking.date) }} :: {{ booking.transferedAmount }}.- ::
+      {{ booking.sourceName }} => {{ booking.targetName }}
+    </li>
+    }
+  </ul>
+</div>

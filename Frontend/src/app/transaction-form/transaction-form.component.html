@@ -1,0 +1,56 @@
+<h2>Transfer</h2>
+<div style="width: max-content">
+  <form
+    [formGroup]="transferForm"
+    (ngSubmit)="makeTransfer()"
+    autocomplete="off"
+  >
+    <div>
+      <label for="sourceSearch">Source Ledger:</label>
+      <input
+        id="sourceSearch"
+        type="text"
+        formControlName="source"
+        (input)="onInputChange('source')"
+        (blur)="hideSuggestions('source')"
+        (focus)="showSuggestions('source')"
+      />
+      <ul *ngIf="showDropdowns['source']">
+        @for (option of selection.sourceOptions; track $index) {
+        <li (click)="selectOption('source', option)">
+          {{ option.name }}
+        </li>
+        }
+      </ul>
+    </div>
+
+    <div>
+      <label for="targetSearch">Target Ledger:</label>
+      <input
+        id="targetSearch"
+        type="text"
+        formControlName="target"
+        (input)="onInputChange('target')"
+        (blur)="hideSuggestions('target')"
+        (focus)="showSuggestions('target')"
+      />
+      <ul *ngIf="showDropdowns['target']">
+        @for (option of selection.targetOptions; track $index) {
+        <li (click)="selectOption('target', option)">
+          {{ option.name }}
+        </li>
+        }
+      </ul>
+    </div>
+
+    <label for="amount">amount: </label>
+    <input id="amount" type="number" formControlName="amount" />
+    <button type="submit" [disabled]="!transferForm.valid">Submit</button>
+  </form>
+
+  @if(message) {
+  <div>
+    <p>{{ message }}</p>
+  </div>
+  }
+</div>
