@@ -1,27 +1,39 @@
 <div>
-    <h2>Ledgers</h2>
-    <ul>
-      <li *ngFor="let ledger of ledgers">
-        <strong>{{ ledger.name }}</strong>: {{ ledger.balance | currency }}
-      </li>
-    </ul>
-
-    <h2>Transfer</h2>
-    <form [formGroup]="transferForm" (ngSubmit)="makeTransfer()">
-      <label for="source">sourceId: </label>
-      <input id="source" type="text" formControlName="sourceId">
-      <label for="target">targetId: </label>
-      <input id="target" type="text" formControlName="targetId">
-    
-      <label for="amount">amount: </label>
-      <input id="amount" type="text" formControlName="amount">
-      <button type="submit" [disabled]="!transferForm.valid">Submit</button>
-
-    </form>
-
-    @if(transferMessage) {
-      <div>
-        <p>{{transferMessage}}</p>
-      </div>
+  <h2>My Ledgers</h2>
+  <ul>
+    @for(ledger of ledgers; track ledger.id) {
+    <li>
+      <strong>{{ ledger.name }}</strong
+      >: {{ ledger.balance | currency }}
+    </li>
     }
+  </ul>
+
+  <h2>My Bookings</h2>
+  <ul>
+    @for (booking of bookings; track booking.id) {
+    <li>
+      {{booking.date}} :: {{booking.transferedAmount}} ::
+      {{booking.sourceName}} => {{booking.targetName}}
+    </li>
+    }
+  </ul>
+
+  <h2>Transfer</h2>
+  <form [formGroup]="transferForm" (ngSubmit)="makeTransfer()">
+    <label for="source">source-ledger id: </label>
+    <input id="source" type="text" formControlName="sourceId" />
+    <label for="target">target-ledger id: </label>
+    <input id="target" type="text" formControlName="targetId" />
+
+    <label for="amount">amount: </label>
+    <input id="amount" type="text" formControlName="amount" />
+    <button type="submit" [disabled]="!transferForm.valid">Submit</button>
+  </form>
+
+  @if(transferMessage) {
+  <div>
+    <p>{{ transferMessage }}</p>
+  </div>
+  }
 </div>

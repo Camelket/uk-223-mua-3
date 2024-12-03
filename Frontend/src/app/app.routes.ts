@@ -5,9 +5,9 @@ import { AuthGuard } from './auth.guard';
 
 export const routes: Routes = [
     {
-      path: 'ledgers',
+      path: 'dashboard',
       component: LedgerComponent,
-      canActivate: [AuthGuard], // Protect this route
+      canActivate: [AuthGuard],
     },
     {
       path: 'login',

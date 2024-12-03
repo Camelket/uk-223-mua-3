@@ -9,7 +9,7 @@ namespace L_Bank.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookingController(IBankService bankService) : ControllerBase
+    public class BookingsController(IBankService bankService) : ControllerBase
     {
         private readonly IBankService bankService = bankService;
 

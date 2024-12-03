@@ -31,7 +31,7 @@ export class LoginComponent {
         this.authService.setToken(response.token);
         
         // Redirect to the ledgers page
-        this.router.navigate(['/ledgers']);
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         console.error('Login failed', err);
