@@ -19,6 +19,13 @@ public class BookingTransactionResult
     public Booking? booking;
 }
 
+public class DepositTransactionResult
+{
+    public ServiceStatus status;
+    public string? message;
+    public Deposit? deposit;
+}
+
 public class BankService(
     IEFBookingRepository bookingRepository,
     IEFUserRepository userRepository,
@@ -337,126 +344,132 @@ public class BankService(
 
     public async Task<DtoWrapper<DepositResponse>> MakeDeposit(DepositRequest request, int userId)
     {
-        if (request.Amount < 0)
-        {
-            return await _MakeWithdrawl(request, userId);
-        }
-        else
-        {
-            return await _MakeDeposit(request, userId);
-        }
-    }
-
-    private async Task<DtoWrapper<DepositResponse>> _MakeDeposit(DepositRequest request, int userId)
-    {
         var strategy = bookingRepository.StartRetryExecution(5);
         try
         {
             var transactionResult = await strategy.ExecuteAsync(async () =>
             {
                 using var transaction = bookingRepository.StartBookingTransaction();
-                var ledger = await ledgerRepository.GetOne(request.LedgerId);
-                if (ledger == null)
+
+                DepositTransactionResult result;
+                if (request.Amount < 0)
                 {
-                    return new DtoWrapper<DepositResponse>()
-                    {
-                        Status = ServiceStatus.BadRequest,
-                        Message = "Ledger doesnt exist",
-                    };
+                    result = await _MakeWithdrawl(request, userId);
                 }
                 else
                 {
-                    ledger.Balance += request.Amount;
-                    var resultLedger = await ledgerRepository.Save(ledger);
-                    var deposit = await depositRepository.Save(
-                        new Deposit()
-                        {
-                            LedgerId = resultLedger.Id,
-                            DepositorId = userId,
-                            Amount = request.Amount,
-                            date = DateTime.Now,
-                        }
-                    );
-                    await transaction.CommitAsync();
-                    return new DtoWrapper<DepositResponse>()
-                    {
-                        Status = ServiceStatus.Success,
-                        Data = DtoMapper.ToDepositResponse(deposit),
-                        Message = "Success",
-                    };
+                    result = await _MakeDeposit(request, userId);
                 }
-            });
-            return transactionResult;
-        }
-        catch (Exception)
-        {
-            return DtoWrapper<DepositResponse>.WrapDto(
-                ServiceStatus.TransactionFailed,
-                "Transaction was unable to complete - Withdrawl not recorded"
-            );
-        }
-    }
 
-    private async Task<DtoWrapper<DepositResponse>> _MakeWithdrawl(
-        DepositRequest request,
-        int userId
-    )
-    {
-        var strategy = bookingRepository.StartRetryExecution(5);
-        try
-        {
-            var transactionResult = await strategy.ExecuteAsync(async () =>
-            {
-                using var transaction = bookingRepository.StartBookingTransaction();
-                var ledger = await ledgerRepository.GetOne(request.LedgerId);
-                if (ledger == null)
-                {
-                    return new DtoWrapper<DepositResponse>()
-                    {
-                        Status = ServiceStatus.BadRequest,
-                        Message = "Ledger doesnt exist",
-                    };
-                }
-                if (ledger.Balance < request.Amount)
+                if (result.status != ServiceStatus.Success)
                 {
                     await transaction.RollbackAsync();
-                    return new DtoWrapper<DepositResponse>()
-                    {
-                        Status = ServiceStatus.BadRequest,
-                        Message = "Insufficient balance for withdrawal",
-                    };
+                    return result;
                 }
-                else
-                {
-                    ledger.Balance += request.Amount;
-                    var resultLedger = await ledgerRepository.Save(ledger);
-                    var deposit = await depositRepository.Save(
-                        new Deposit()
-                        {
-                            LedgerId = resultLedger.Id,
-                            DepositorId = userId,
-                            Amount = request.Amount,
-                            date = DateTime.Now,
-                        }
-                    );
-                    await transaction.CommitAsync();
-                    return new DtoWrapper<DepositResponse>()
-                    {
-                        Status = ServiceStatus.Success,
-                        Data = DtoMapper.ToDepositResponse(deposit),
-                        Message = "Success",
-                    };
-                }
+
+                await transaction.CommitAsync();
+                return result;
             });
-            return transactionResult;
+
+            if (
+                transactionResult.status == ServiceStatus.Success
+                && transactionResult.deposit != null
+            )
+            {
+                return DtoWrapper<DepositResponse>.WrapDto(
+                    DtoMapper.ToDepositResponse(transactionResult.deposit),
+                    null
+                );
+            }
+            return DtoWrapper<DepositResponse>.WrapDto(
+                transactionResult.status,
+                transactionResult.message ?? "Transaction was unable to complete"
+            );
         }
         catch (Exception)
         {
             return DtoWrapper<DepositResponse>.WrapDto(
                 ServiceStatus.TransactionFailed,
-                "Transaction was unable to complete - Withdrawl not recorded"
+                "Transaction was unable to complete"
             );
         }
+    }
+
+    private async Task<DepositTransactionResult> _MakeDeposit(DepositRequest request, int userId)
+    {
+        var ledger = await ledgerRepository.GetOne(request.LedgerId);
+        if (ledger == null)
+        {
+            return new DepositTransactionResult()
+            {
+                status = ServiceStatus.BadRequest,
+                message = "Ledger doesnt exist",
+                deposit = null,
+            };
+        }
+
+        ledger.Balance += request.Amount;
+
+        var deposit = new Deposit()
+        {
+            Ledger = ledger,
+            DepositorId = userId,
+            Amount = request.Amount,
+            date = DateTime.Now,
+        };
+
+        await ledgerRepository.Save(ledger);
+        await depositRepository.Save(deposit);
+
+        return new DepositTransactionResult()
+        {
+            status = ServiceStatus.Success,
+            message = null,
+            deposit = deposit,
+        };
+    }
+
+    private async Task<DepositTransactionResult> _MakeWithdrawl(DepositRequest request, int userId)
+    {
+        var ledger = await ledgerRepository.GetOne(request.LedgerId);
+        if (ledger == null)
+        {
+            return new DepositTransactionResult()
+            {
+                status = ServiceStatus.BadRequest,
+                message = "Ledger doesnt exist",
+                deposit = null,
+            };
+        }
+        if (ledger.Balance < request.Amount)
+        {
+            return new DepositTransactionResult()
+            {
+                status = ServiceStatus.BadRequest,
+                message = "Insufficient balance for withdrawal",
+                deposit = null,
+            };
+        }
+
+        ledger.Balance += request.Amount;
+
+        var deposit = new Deposit()
+        {
+            Ledger = ledger,
+            DepositorId = userId,
+            Amount = request.Amount,
+            date = DateTime.Now,
+        };
+
+        await ledgerRepository.Save(ledger);
+        await depositRepository.Save(deposit);
+
+        return new DepositTransactionResult()
+        {
+            status = ServiceStatus.Success,
+            message = null,
+            deposit = deposit,
+        };
     }
 
     public async Task<DtoWrapper<List<DepositResponse>>> GetDepositsByUser(int userId)
