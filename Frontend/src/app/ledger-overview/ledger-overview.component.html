@@ -1,0 +1,11 @@
+<div>
+  <h2>My Ledgers</h2>
+  <ul>
+    @for(ledger of myLedgers; track ledger.id) {
+    <li>
+      <strong>{{ ledger.name }}</strong
+      >: {{ ledger.balance }} CHF
+    </li>
+    }
+  </ul>
+</div>

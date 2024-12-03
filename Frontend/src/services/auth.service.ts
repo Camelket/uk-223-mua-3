@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthService {
-  private tokenKey = 'authToken';
+  private tokenKey = "authToken";
   private isAuthenticated: boolean | null = null;
 
   isLoggedIn() {
@@ -12,7 +13,16 @@ export class AuthService {
       this.isAuthenticated = this.getToken() != null;
     }
 
-    return this.isAuthenticated == true;
+    if (!this.isAuthenticated) {
+      return false;
+    }
+
+    if (this.tokenIsActive()) {
+      return true;
+    }
+
+    this.clearToken();
+    return false;
   }
 
   setToken(token: string) {
@@ -27,5 +37,17 @@ export class AuthService {
   clearToken() {
     localStorage.removeItem(this.tokenKey);
     this.isAuthenticated = false;
+  }
+
+  tokenIsActive(): boolean {
+    const token = this.getToken();
+    const { exp } = jwtDecode<JwtPayload>(token ?? "");
+    if (!exp) {
+      return false;
+    }
+    if (Date.now() >= exp * 1000) {
+      return false;
+    }
+    return true;
   }
 }

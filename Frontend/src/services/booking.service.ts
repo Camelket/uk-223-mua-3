@@ -50,7 +50,7 @@ export class BookingService {
 
   transferFunds(bookingRequest: BookingRequest): Observable<Booking> {
     const token = this.authService.getToken();
-    return this.http.post<Booking>(`${environment.apiUrl}/booking`, bookingRequest, {
+    return this.http.post<Booking>(`${environment.apiUrl}/bookings`, bookingRequest, {
       headers: {
         Authorization: token ?? "",
       }
