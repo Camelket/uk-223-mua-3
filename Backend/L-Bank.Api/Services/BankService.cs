@@ -227,6 +227,16 @@ public class BankService(
             };
         }
 
+        if (!(amount > 0))
+        {
+            return new BookingTransactionResult()
+            {
+                status = ServiceStatus.BadRequest,
+                message = "Cannot transfer amounts which arent greater than 0",
+                booking = null,
+            };
+        }
+
         if (sourceLedger.Balance < amount)
         {
             return new BookingTransactionResult()
@@ -243,8 +253,8 @@ public class BankService(
         var booking = new Booking
         {
             Amount = amount,
-            SourceId = sourceLedger.Id,
-            DestinationId = targetLedger.Id,
+            Source = sourceLedger,
+            Destination = targetLedger,
             Date = DateTime.Now,
         };
 

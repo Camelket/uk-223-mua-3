@@ -36,8 +36,16 @@ public class EFUserRepository(AppDbContext context) : IEFUserRepository
 
     public async Task<User> Save(User user)
     {
-        var SavedUser = await context.AddAsync(user);
+        if (user.Id != 0)
+        {
+            context.Update(user);
+        }
+        else
+        {
+            context.Add(user);
+        }
+        
         await context.SaveChangesAsync();
-        return SavedUser.Entity;
+        return user;
     }
 }

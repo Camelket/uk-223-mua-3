@@ -39,7 +39,9 @@ public static class DtoMapper
         {
             Id = booking.Id,
             SourceId = booking.SourceId,
+            SourceName = booking.Source?.Name,
             TargetId = booking.DestinationId,
+            TargetName = booking.Destination?.Name,
             TransferedAmount = booking.Amount,
             Date = booking.Date,
         };
