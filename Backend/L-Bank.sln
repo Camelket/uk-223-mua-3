@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L-Bank.Api", "L-Bank.Api\L-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LBank.Cli2", "LBank.Cli2\LBank.Cli2.csproj", "{9823FEB4-E4E8-47A7-B066-92853E9C38C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L-Bank.Tests", "L-Bank.Tests\L-Bank.Tests.csproj", "{F8996420-E743-4F88-9CF2-6284ADDF50A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L-Bank.LoadTests", "L-Bank.LoadTests\L-Bank.LoadTests.csproj", "{1F938CFD-DCBC-48F8-B67F-83D2621F52A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{9823FEB4-E4E8-47A7-B066-92853E9C38C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9823FEB4-E4E8-47A7-B066-92853E9C38C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9823FEB4-E4E8-47A7-B066-92853E9C38C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8996420-E743-4F88-9CF2-6284ADDF50A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8996420-E743-4F88-9CF2-6284ADDF50A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8996420-E743-4F88-9CF2-6284ADDF50A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8996420-E743-4F88-9CF2-6284ADDF50A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F938CFD-DCBC-48F8-B67F-83D2621F52A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F938CFD-DCBC-48F8-B67F-83D2621F52A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F938CFD-DCBC-48F8-B67F-83D2621F52A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F938CFD-DCBC-48F8-B67F-83D2621F52A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
