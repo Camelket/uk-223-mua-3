@@ -21,6 +21,33 @@ export class BookingService {
     });
   }
 
+  getMyBookings(): Observable<Booking[]> {
+    const token = this.authService.getToken();
+    return this.http.get<Booking[]>(`${environment.apiUrl}/bookings`, {
+      headers: {
+        Authorization: token ?? "",
+      },
+    });
+  }
+
+  getAllBookings(): Observable<Booking[]> {
+    const token = this.authService.getToken();
+    return this.http.get<Booking[]>(`${environment.apiUrl}/bookings/all`, {
+      headers: {
+        Authorization: token ?? "",
+      },
+    });
+  }
+
+  getLedger(id: number): Observable<Booking> {
+    const token = this.authService.getToken();
+    return this.http.get<Booking>(`${environment.apiUrl}/bookings/${id}`, {
+      headers: {
+        Authorization: token ?? "",
+      },
+    });
+  }
+
   transferFunds(bookingRequest: BookingRequest): Observable<Booking> {
     const token = this.authService.getToken();
     return this.http.post<Booking>(`${environment.apiUrl}/booking`, {
