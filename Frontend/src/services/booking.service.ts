@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable, take } from "rxjs";
+import { Observable } from "rxjs";
 import { AuthService } from "./auth.service";
 import { Booking, BookingRequest } from "../models/model";
 import { environment } from "../environments/environment";
