@@ -350,16 +350,7 @@ public class BankService(
             var transactionResult = await strategy.ExecuteAsync(async () =>
             {
                 using var transaction = bookingRepository.StartBookingTransaction();
-
-                DepositTransactionResult result;
-                if (request.Amount < 0)
-                {
-                    result = await _MakeWithdrawl(request, userId);
-                }
-                else
-                {
-                    result = await _MakeDeposit(request, userId);
-                }
+                var result = await _DepositOrWithdrawl(request, userId);
 
                 if (result.status != ServiceStatus.Success)
                 {
@@ -395,7 +386,10 @@ public class BankService(
         }
     }
 
-    private async Task<DepositTransactionResult> _MakeDeposit(DepositRequest request, int userId)
+    public async Task<DepositTransactionResult> _DepositOrWithdrawl(
+        DepositRequest request,
+        int userId
+    )
     {
         var ledger = await ledgerRepository.GetOne(request.LedgerId);
         if (ledger == null)
@@ -407,41 +401,7 @@ public class BankService(
                 deposit = null,
             };
         }
-
-        ledger.Balance += request.Amount;
-
-        var deposit = new Deposit()
-        {
-            Ledger = ledger,
-            DepositorId = userId,
-            Amount = request.Amount,
-            date = DateTime.Now,
-        };
-
-        await ledgerRepository.Save(ledger);
-        await depositRepository.Save(deposit);
-
-        return new DepositTransactionResult()
-        {
-            status = ServiceStatus.Success,
-            message = null,
-            deposit = deposit,
-        };
-    }
-
-    private async Task<DepositTransactionResult> _MakeWithdrawl(DepositRequest request, int userId)
-    {
-        var ledger = await ledgerRepository.GetOne(request.LedgerId);
-        if (ledger == null)
-        {
-            return new DepositTransactionResult()
-            {
-                status = ServiceStatus.BadRequest,
-                message = "Ledger doesnt exist",
-                deposit = null,
-            };
-        }
-        if (ledger.Balance < request.Amount)
+        if (request.Amount < 0 && ledger.Balance < request.Amount)
         {
             return new DepositTransactionResult()
             {
