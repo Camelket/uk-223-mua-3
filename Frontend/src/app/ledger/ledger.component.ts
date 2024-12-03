@@ -51,6 +51,7 @@ export class LedgerComponent implements OnInit {
           next: () => {
             this.transferMessage = 'Transfer successful!';
             this.loadLedgers(); // Refresh ledger balances
+            this.transferForm.reset();
           },
           error: (error) => {
             this.transferMessage = `Transfer failed: ${error.error.message}`;

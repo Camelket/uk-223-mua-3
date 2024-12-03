@@ -18,4 +18,10 @@
       <button type="submit" [disabled]="!transferForm.valid">Submit</button>
 
     </form>
+
+    @if(transferMessage) {
+      <div>
+        <p>{{transferMessage}}</p>
+      </div>
+    }
 </div>
