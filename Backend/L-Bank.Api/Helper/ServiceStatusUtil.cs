@@ -9,6 +9,8 @@ public static class ServiceStatusUtil
         {
             ServiceStatus.Success => HttpStatusCode.OK,
             ServiceStatus.NotFound => HttpStatusCode.NotFound,
+            ServiceStatus.BadRequest => HttpStatusCode.BadRequest,
+            ServiceStatus.TransactionFailed => HttpStatusCode.Conflict,
             ServiceStatus.Failed => HttpStatusCode.InternalServerError,
             _ => HttpStatusCode.InternalServerError,
         };

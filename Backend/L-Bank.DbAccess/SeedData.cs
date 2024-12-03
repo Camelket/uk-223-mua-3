@@ -13,11 +13,13 @@ public static class SeedData
 
         if (userCount < 1)
         {
+            context.Database.ExecuteSql($"SET IDENTITY_INSERT dbo.Users ON");
             foreach (User user in UserSeed)
             {
                 context.Add(user);
             }
             context.SaveChanges();
+            context.Database.ExecuteSql($"SET IDENTITY_INSERT dbo.Users OFF");
         }
 
         if (ledgerCount < 1)
@@ -34,21 +36,38 @@ public static class SeedData
     [
         new()
         {
+            Id = 1,
             Username = "Admin",
             PasswordHash = PasswordHelper.HashAndSaltPassword("adminpass"),
-            Role = Roles.Administrators,
+            Role = Roles.Admin,
         },
         new()
         {
+            Id = 2,
             Username = "User",
             PasswordHash = PasswordHelper.HashAndSaltPassword("userpass"),
-            Role = Roles.Users,
+            Role = Roles.User,
         },
     ];
     public static List<Ledger> LedgerSeed =
     [
-        new() { Name = "Manitu AG", Balance = 1000, UserId = 1 },
-        new() { Name = "Chrysalkis GmbH", Balance = 2000 , UserId = 2},
-        new() { Name = "Smith & Co KG", Balance = 3000, UserId = 2 },
+        new()
+        {
+            Name = "Manitu AG",
+            Balance = 1000,
+            UserId = 1,
+        },
+        new()
+        {
+            Name = "Chrysalkis GmbH",
+            Balance = 2000,
+            UserId = 2,
+        },
+        new()
+        {
+            Name = "Smith & Co KG",
+            Balance = 3000,
+            UserId = 2,
+        },
     ];
 }

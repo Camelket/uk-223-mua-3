@@ -2,7 +2,6 @@ using System.Security.Claims;
 using L_Bank.Api.Dtos;
 using L_Bank.Api.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace L_Bank.Api.Controllers

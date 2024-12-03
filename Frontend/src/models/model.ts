@@ -8,7 +8,9 @@ export interface Ledger {
 export interface Booking {
   id: number;
   sourceId: number;
+  sourceName: string;
   targetId: number;
+  targetName: string;
   transferedAmount: number;
   date: Date;
 }
@@ -34,8 +36,10 @@ export interface LedgerRequest {
   name: string;
 }
 
-export interface Bookingrequest {
+export interface BookingRequest {
   sourceId: number;
   targetId: number;
   amount: number;
 }
+
+
