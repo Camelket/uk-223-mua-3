@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { AuthService } from "./auth.service";
-import { Ledger, LedgerRequest } from "../models/model";
+import { Ledger, LedgerRequest, SimpleLedger } from "../models/model";
 import { environment } from "../environments/environment";
 
 @Injectable({
@@ -13,9 +13,27 @@ export class LedgerService {
 
   //TODO: correct methods to use ledger arg
 
-  getLedgers(): Observable<Ledger[]> {
+  getMyLedgers(): Observable<Ledger[]> {
     const token = this.authService.getToken();
     return this.http.get<Ledger[]>(`${environment.apiUrl}/ledgers`, {
+      headers: {
+        Authorization: token ?? "",
+      },
+    });
+  }
+
+  getAllSimpleLedgers(): Observable<SimpleLedger[]> {
+    const token = this.authService.getToken();
+    return this.http.get<SimpleLedger[]>(`${environment.apiUrl}/ledgers/names`, {
+      headers: {
+        Authorization: token ?? "",
+      },
+    });
+  }
+
+  getAllLedgers(): Observable<Ledger[]> {
+    const token = this.authService.getToken();
+    return this.http.get<Ledger[]>(`${environment.apiUrl}/ledgers/all`, {
       headers: {
         Authorization: token ?? "",
       },
@@ -31,18 +49,18 @@ export class LedgerService {
     });
   }
 
-  newLedger(ledger: LedgerRequest): Observable<Ledger> {
+  newLedger(ledgerReq: LedgerRequest): Observable<Ledger> {
     const token = this.authService.getToken();
-    return this.http.post<Ledger>(`${environment.apiUrl}/ledgers`, {
+    return this.http.post<Ledger>(`${environment.apiUrl}/ledgers`, ledgerReq, {
       headers: {
         Authorization: token ?? "",
       },
     });
   }
 
-  newLedgerForUser(userId: number, ledger: LedgerRequest): Observable<Ledger> {
+  newLedgerForUser(userId: number, ledgerReq: LedgerRequest): Observable<Ledger> {
     const token = this.authService.getToken();
-    return this.http.post<Ledger>(`${environment.apiUrl}/ledgers/${userId}`, {
+    return this.http.post<Ledger>(`${environment.apiUrl}/ledgers/${userId}`, ledgerReq, {
       headers: {
         Authorization: token ?? "",
       },

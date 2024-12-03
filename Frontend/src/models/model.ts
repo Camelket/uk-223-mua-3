@@ -5,6 +5,11 @@ export interface Ledger {
   balance: number;
 }
 
+export interface SimpleLedger {
+  id: number;
+  name: string;
+}
+
 export interface Booking {
   id: number;
   sourceId: number;
