@@ -7,6 +7,8 @@ public interface IBankService
     // including ledgers
     Task<DtoWrapper<UserResponse>> GetUserWithLedgers(int userId);
 
+    Task<DtoWrapper<decimal>> GetTotalMoney();
+
     Task<DtoWrapper<LedgerResponse>> GetLedger(int ledgerId);
     Task<DtoWrapper<List<LedgerResponse>>> GetAllLedgers();
     Task<DtoWrapper<List<SimpleLedgerResponse>>> GetAllLedgersInSimpleForm();

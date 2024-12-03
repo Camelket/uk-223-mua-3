@@ -11,7 +11,14 @@ import { environment } from "../environments/environment";
 export class LedgerService {
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  //TODO: correct methods to use ledger arg
+  getTotalMoney(): Observable<number> {
+    const token = this.authService.getToken();
+    return this.http.get<number>(`${environment.apiUrl}/ledgers/total`, {
+      headers: {
+        Authorization: token ?? "",
+      },
+    });
+  }
 
   getMyLedgers(): Observable<Ledger[]> {
     const token = this.authService.getToken();
@@ -24,11 +31,14 @@ export class LedgerService {
 
   getAllSimpleLedgers(): Observable<SimpleLedger[]> {
     const token = this.authService.getToken();
-    return this.http.get<SimpleLedger[]>(`${environment.apiUrl}/ledgers/names`, {
-      headers: {
-        Authorization: token ?? "",
-      },
-    });
+    return this.http.get<SimpleLedger[]>(
+      `${environment.apiUrl}/ledgers/names`,
+      {
+        headers: {
+          Authorization: token ?? "",
+        },
+      }
+    );
   }
 
   getAllLedgers(): Observable<Ledger[]> {
@@ -58,12 +68,19 @@ export class LedgerService {
     });
   }
 
-  newLedgerForUser(userId: number, ledgerReq: LedgerRequest): Observable<Ledger> {
+  newLedgerForUser(
+    userId: number,
+    ledgerReq: LedgerRequest
+  ): Observable<Ledger> {
     const token = this.authService.getToken();
-    return this.http.post<Ledger>(`${environment.apiUrl}/ledgers/${userId}`, ledgerReq, {
-      headers: {
-        Authorization: token ?? "",
-      },
-    });
+    return this.http.post<Ledger>(
+      `${environment.apiUrl}/ledgers/${userId}`,
+      ledgerReq,
+      {
+        headers: {
+          Authorization: token ?? "",
+        },
+      }
+    );
   }
 }

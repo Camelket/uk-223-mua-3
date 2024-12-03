@@ -471,4 +471,20 @@ public class BankService(
             "Transaction failed for unknown reason"
         );
     }
+
+    public async Task<DtoWrapper<decimal>> GetTotalMoney()
+    {
+        try
+        {
+            var result = await ledgerRepository.GetTotalMoney();
+            return DtoWrapper<decimal>.WrapDto(result, null);
+        }
+        catch (Exception)
+        {
+            return DtoWrapper<decimal>.WrapDto(
+                ServiceStatus.Failed,
+                "Cannot get total money in bank"
+            );
+        }
+    }
 }
