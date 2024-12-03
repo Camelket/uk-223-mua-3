@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, take } from "rxjs";
 import { AuthService } from "./auth.service";
-import { Booking } from "../models/model";
+import { Booking, Bookingrequest, BookingResponse } from "../models/model";
 
 @Injectable({
   providedIn: "root",
@@ -19,5 +19,15 @@ export class BookingService {
         Authorization: token ?? "",
       },
     });
+  }
+
+  transferFunds(bookingRequest: Bookingrequest): Observable<BookingResponse> {
+    const token = this.authService.getToken();
+    return this.http.post<BookingResponse>(`${this.apiUrl}/booking`, {
+      headers: {
+        Authorization: token ?? "",
+      },
+      bookingRequest
+    })
   }
 }

@@ -12,6 +12,8 @@ export class LedgerService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
+  //TODO: correct methods to use ledger arg
+
   getLedgers(): Observable<Ledger[]> {
     const token = this.authService.getToken();
     return this.http.get<Ledger[]>(`${this.apiUrl}/ledgers`, {

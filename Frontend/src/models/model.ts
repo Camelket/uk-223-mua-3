@@ -39,3 +39,11 @@ export interface Bookingrequest {
   targetId: number;
   amount: number;
 }
+
+export interface BookingResponse {
+  id: number,
+  sourceId: number,
+  targetId: number,
+  transferedAmount: number,
+  dateTime: Date
+}

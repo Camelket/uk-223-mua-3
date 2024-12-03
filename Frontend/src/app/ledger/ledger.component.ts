@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LedgerService } from '../../services/ledger.service';
-import { Ledger } from '../../models/ledger.model';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Bookingrequest, Ledger } from '../../models/model';
+import { BookingService } from '../../services/booking.service';
+
 
 @Component({
   selector: 'app-ledger',
@@ -15,13 +17,18 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
   providers:  [ LedgerService, HttpClient ]
 })
 export class LedgerComponent implements OnInit {
+  transferForm: FormGroup;
+
   ledgers: Ledger[] = [];
-  fromLedgerId: number | null = null;
-  toLedgerId: number | null = null;
-  amount: number | null = null;
   transferMessage: string = '';
 
-  constructor(private ledgerService: LedgerService) {}
+  constructor(private ledgerService: LedgerService, private bookingService: BookingService, private formBuilder: FormBuilder) {
+    this.transferForm =  this.formBuilder.group({
+      sourceId: [null, [Validators.required, Validators.min(1)]],
+      targetId: [null, [Validators.required, Validators.min(1)]],
+      amount: [null, [Validators.required, Validators.min(0)]]
+    });
+  }
 
   ngOnInit(): void {
     this.loadLedgers();
@@ -36,23 +43,20 @@ export class LedgerComponent implements OnInit {
 
   makeTransfer(): void {
     if (
-      this.fromLedgerId !== null &&
-      this.toLedgerId !== null &&
-      this.amount !== null &&
-      this.amount > 0
+      this.transferForm.valid
     ) {
-      this.ledgerService
-        .transferFunds(this.fromLedgerId, this.toLedgerId, this.amount)
-        .subscribe(
-          () => {
+      this.bookingService
+        .transferFunds(this.transferForm.value)
+        .subscribe({
+          next: () => {
             this.transferMessage = 'Transfer successful!';
             this.loadLedgers(); // Refresh ledger balances
           },
-          (error) => {
+          error: (error) => {
             this.transferMessage = `Transfer failed: ${error.error.message}`;
             console.error('Transfer error', error);
           }
-        );
+        });
     } else {
       this.transferMessage = 'Please fill in all fields with valid data.';
     }
