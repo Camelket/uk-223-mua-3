@@ -1,7 +1,9 @@
-<h1>L Bank</h1>
-@if (total) {
-<p>Bank-Total: {{ total }}</p>
-}
+<div style="display: flex; flex-direction: row; gap: 50px; align-items: center;">
+  <h1>L Bank</h1>
+  @if (total) {
+  <p>Bank-Total: {{ total }}</p>
+  }
+</div>
 
 <div class="app-container">
   <router-outlet></router-outlet>
