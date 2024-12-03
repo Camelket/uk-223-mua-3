@@ -1,0 +1,37 @@
+<h2>Deposit / Widthdrawl</h2>
+<div style="width: max-content">
+  <form
+    [formGroup]="transferForm"
+    (ngSubmit)="makeDeposit()"
+    autocomplete="off"
+  >
+    <div>
+      <label for="sourceSearch">Ledger:</label>
+      <input
+        id="sourceSearch"
+        type="text"
+        formControlName="source"
+        (input)="onInputChange()"
+        (blur)="hideSuggestions()"
+        (focus)="showSuggestions()"
+      />
+      <ul *ngIf="showDropdown">
+        @for (option of selection.options; track $index) {
+        <li (click)="selectOption(option)">
+          {{ option.name }}
+        </li>
+        }
+      </ul>
+    </div>
+
+    <label for="amount">amount: </label>
+    <input id="amount" type="number" formControlName="amount" />
+    <button type="submit" [disabled]="!transferForm.valid">Submit</button>
+  </form>
+
+  @if(message) {
+  <div>
+    <p>{{ message }}</p>
+  </div>
+  }
+</div>

@@ -1,10 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { LedgerService } from "../../services/ledger.service";
-import { Booking, Ledger } from "../../models/model";
+import { Booking, Deposit, Ledger } from "../../models/model";
 import { LedgerOverviewComponent } from "../ledger-overview/ledger-overview.component";
 import { TransactionHistoryComponent } from "../transaction-history/transaction-history.component";
 import { BookingService } from "../../services/booking.service";
 import { TransactionFormComponent } from "../transaction-form/transaction-form.component";
+import { DepositFormComponent } from "../deposit-form/deposit-form.component";
+import { DepositHistoryComponent } from "../deposit-history/deposit-history.component";
+import { DepositService } from "../../services/deposit.service";
 
 @Component({
   selector: "app-dashboard",
@@ -12,6 +15,8 @@ import { TransactionFormComponent } from "../transaction-form/transaction-form.c
     LedgerOverviewComponent,
     TransactionHistoryComponent,
     TransactionFormComponent,
+    DepositFormComponent,
+    DepositHistoryComponent
   ],
   providers: [LedgerService, BookingService],
   templateUrl: "./dashboard.component.html",
@@ -20,15 +25,18 @@ import { TransactionFormComponent } from "../transaction-form/transaction-form.c
 export class DashboardComponent implements OnInit {
   myLedgers: Ledger[] = [];
   myBookings: Booking[] = [];
+  myDeposits: Deposit[] = [];
 
   constructor(
     private ledgerService: LedgerService,
-    private bookingService: BookingService
+    private bookingService: BookingService,
+    private depositService: DepositService
   ) {}
 
   ngOnInit(): void {
     this.loadLedgers();
     this.loadBookings();
+    this.loadDeposits();
   }
 
   loadLedgers(): void {
@@ -45,8 +53,16 @@ export class DashboardComponent implements OnInit {
     );
   }
 
+  loadDeposits(): void {
+    this.depositService.getMyDeposits().subscribe(
+      (data) => (this.myDeposits = data),
+      (error) => console.error("Error fetching deposits", error)
+    );
+  }
+
   reload() {
     this.loadLedgers();
     this.loadBookings();
+    this.loadDeposits();
   }
 }

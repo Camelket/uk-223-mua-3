@@ -12,9 +12,9 @@ export class BookingService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  getBookingsForLedger(id: number): Observable<Booking> {
+  getBookingsForLedger(id: number): Observable<Booking[]> {
     const token = this.authService.getToken();
-    return this.http.get<Booking>(`${environment.apiUrl}/ledgers/${id}/bookings`, {
+    return this.http.get<Booking[]>(`${environment.apiUrl}/ledgers/${id}/bookings`, {
       headers: {
         Authorization: token ?? "",
       },

@@ -130,6 +130,9 @@ export class TransactionFormComponent {
         .subscribe({
           next: () => {
             this.message = "Transfer successful!";
+            setTimeout(() => {
+              this.message = null;
+            }, 2000);
             this.onTransaction.emit();
             this.transferForm.reset();
           },

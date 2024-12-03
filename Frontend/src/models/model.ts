@@ -20,6 +20,14 @@ export interface Booking {
   date: string;
 }
 
+export interface Deposit {
+  id: number;
+  amount: number;
+  ledgerId: number;
+  ledgerName: string;
+  date: string;
+}
+
 export interface Login {
   token: string;
 }
@@ -47,4 +55,7 @@ export interface BookingRequest {
   amount: number;
 }
 
-
+export interface DepositRequest {
+  amount: number;
+  ledgerId: number;
+}

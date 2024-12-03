@@ -1,0 +1,11 @@
+<h2>Deposit History:</h2>
+<div style="height: 200px; overflow-y: scroll">
+  <ul>
+    @for (deposit of mySortedDeposits(); track deposit.id) {
+    <li>
+      {{ formatDate(deposit.date) }} :: {{ deposit.amount }}.- ::
+      {{ deposit.ledgerName }}
+    </li>
+    }
+  </ul>
+</div>
