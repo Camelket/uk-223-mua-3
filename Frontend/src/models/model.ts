@@ -8,7 +8,9 @@ export interface Ledger {
 export interface Booking {
   id: number;
   sourceId: number;
+  sourceName: string;
   targetId: number;
+  targetName: string;
   transferedAmount: number;
   date: Date;
 }

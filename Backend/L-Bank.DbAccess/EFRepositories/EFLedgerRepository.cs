@@ -25,7 +25,15 @@ public class EFLedgerRepository(AppDbContext context) : IEFLedgerRepository
 
     public async Task<Ledger> Save(Ledger ledger)
     {
-        context.Add(ledger);
+        if (ledger.Id != 0)
+        {
+            context.Update(ledger);
+        }
+        else
+        {
+            context.Add(ledger);
+        }
+        
         await context.SaveChangesAsync();
         return ledger;
     }
