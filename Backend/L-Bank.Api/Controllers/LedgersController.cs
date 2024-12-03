@@ -12,6 +12,24 @@ namespace L_Bank.Api.Controllers
     {
         private readonly IBankService bankService = bankService;
 
+        [HttpGet("total")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<decimal>> GetTotalMoney()
+        {
+            var result = await bankService.GetTotalMoney();
+
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+
+            return Problem(
+                detail: result.Message,
+                statusCode: ServiceStatusUtil.Map(result.Status),
+                title: "Error"
+            );
+        }
+
         [HttpGet]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<List<LedgerResponse>>> GetLedgers()
