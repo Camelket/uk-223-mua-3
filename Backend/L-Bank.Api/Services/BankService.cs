@@ -17,9 +17,11 @@ public class BookingTransactionResult
 public class BankService(
     IEFBookingRepository bookingRepository,
     IEFUserRepository userRepository,
-    IEFLedgerRepository ledgerRepository
+    IEFLedgerRepository ledgerRepository,
+    ILogger<BankService> logger
 ) : IBankService
 {
+    private readonly ILogger<BankService> logger = logger;
     private readonly IEFBookingRepository bookingRepository = bookingRepository;
     private readonly IEFUserRepository userRepository = userRepository;
     private readonly IEFLedgerRepository ledgerRepository = ledgerRepository;
@@ -216,6 +218,8 @@ public class BankService(
     {
         var sourceLedger = await ledgerRepository.GetOne(sourceId);
         var targetLedger = await ledgerRepository.GetOne(targetId);
+
+        // Thread.Sleep(5000);
 
         if (sourceLedger == null || targetLedger == null)
         {
