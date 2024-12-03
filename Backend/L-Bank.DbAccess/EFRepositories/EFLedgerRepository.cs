@@ -15,7 +15,7 @@ public class EFLedgerRepository(AppDbContext context) : IEFLedgerRepository
 
     public async Task<Ledger?> GetOne(int id)
     {
-        return await context.Set<Ledger>().AsNoTracking().FirstAsync(x => x.Id == id);
+        return await context.Set<Ledger>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<decimal> GetTotalMoney()

@@ -152,13 +152,13 @@ namespace L_Bank_W_Backend.DbAccess
                 {
                     { "username", "admin" },
                     { "password_hash", PasswordHelper.HashAndSaltPassword("adminpass") },
-                    { "role", Roles.Administrators.ToString() }
+                    { "role", Roles.Admin.ToString() }
                 },
                 new Dictionary<string, string>
                 {
                     { "username", "testuser" },
                     { "password_hash", PasswordHelper.HashAndSaltPassword("testuserpass") },
-                    { "role", Roles.Users.ToString() }
+                    { "role", Roles.User.ToString() }
                 },
             };
 

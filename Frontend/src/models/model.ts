@@ -34,16 +34,10 @@ export interface LedgerRequest {
   name: string;
 }
 
-export interface Bookingrequest {
+export interface BookingRequest {
   sourceId: number;
   targetId: number;
   amount: number;
 }
 
-export interface BookingResponse {
-  id: number,
-  sourceId: number,
-  targetId: number,
-  transferedAmount: number,
-  dateTime: Date
-}
+

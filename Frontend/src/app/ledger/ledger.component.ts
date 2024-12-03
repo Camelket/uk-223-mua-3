@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { LedgerService } from '../../services/ledger.service';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Bookingrequest, Ledger } from '../../models/model';
 import { BookingService } from '../../services/booking.service';
+import {ReactiveFormsModule} from '@angular/forms';
+import { Ledger } from '../../models/model';
 
 
 @Component({
   selector: 'app-ledger',
   templateUrl: './ledger.component.html',
   styleUrls: ['./ledger.component.css'],
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   standalone: true,
   providers:  [ LedgerService, HttpClient ]
 })

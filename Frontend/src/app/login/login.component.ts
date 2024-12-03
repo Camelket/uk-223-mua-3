@@ -23,7 +23,7 @@ export class LoginComponent {
   onSubmit() {
     const loginData = { username: this.username, password: this.password };
 
-    this.http.post('http://localhost:5290/api/v1/auth/login', loginData).subscribe({
+    this.http.post('http://localhost:5290/api/auth/login', loginData).subscribe({
       next: (response: any) => {
         console.log('Login successful', response);
         // Handle success (e.g., navigate to another page)
