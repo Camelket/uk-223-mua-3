@@ -4,6 +4,6 @@ namespace L_Bank.Api.Dtos;
 
 public class DepositRequest
 {
-    public int amount { get; set; }
-    public int ledgerId { get; set; }
+    public int Amount { get; set; }
+    public int LedgerId { get; set; }
 }

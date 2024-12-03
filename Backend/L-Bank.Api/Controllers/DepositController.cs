@@ -43,7 +43,7 @@ namespace L_Bank.Api.Controllers
             if (!HttpContext.User.IsInRole("Admin"))
             {
                 var userIsOwner = await bankService.LedgerBelongsToUser(
-                    depositRequest.ledgerId,
+                    depositRequest.LedgerId,
                     requestorId
                 );
 

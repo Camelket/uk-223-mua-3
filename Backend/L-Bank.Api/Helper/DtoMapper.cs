@@ -11,9 +11,11 @@ public static class DtoMapper
     {
         return new DepositResponse()
         {
-            amount = deposit.Amount,
-            date = deposit.date,
-            ledgerId = deposit.LedgerId,
+            DepositId = deposit.Id,
+            Amount = deposit.Amount,
+            Date = deposit.date,
+            LedgerId = deposit.LedgerId,
+            LedgerName = deposit.Ledger?.Name,
         };
     }
 

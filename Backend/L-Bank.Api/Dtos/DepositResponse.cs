@@ -4,8 +4,9 @@ namespace L_Bank.Api.Dtos;
 
 public class DepositResponse
 {
-    public decimal amount { get; set; }
-    public DateTime date { get; set; }
-    public int ledgerId { get; set; }
-    public string? ledgerName { get; set; }
+    public int DepositId { get; set; }
+    public decimal Amount { get; set; }
+    public DateTime Date { get; set; }
+    public int LedgerId { get; set; }
+    public string? LedgerName { get; set; }
 }

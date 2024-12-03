@@ -337,22 +337,14 @@ public class BankService(
 
     public async Task<DtoWrapper<DepositResponse>> MakeDeposit(DepositRequest request, int userId)
     {
-        var userIsOwner = await LedgerBelongsToUser(request.ledgerId, userId);
-        if (userIsOwner)
+        if (request.Amount < 0)
         {
-            if (request.amount < 0)
-            {
-                return await _MakeWithdrawl(request, userId);
-            }
-            else
-            {
-                return await _MakeDeposit(request, userId);
-            }
+            return await _MakeWithdrawl(request, userId);
         }
-        return DtoWrapper<DepositResponse>.WrapDto(
-            ServiceStatus.BadRequest,
-            "Not your Ledger scrub"
-        );
+        else
+        {
+            return await _MakeDeposit(request, userId);
+        }
     }
 
     private async Task<DtoWrapper<DepositResponse>> _MakeDeposit(DepositRequest request, int userId)
@@ -363,7 +355,7 @@ public class BankService(
             var transactionResult = await strategy.ExecuteAsync(async () =>
             {
                 using var transaction = bookingRepository.StartBookingTransaction();
-                var ledger = await ledgerRepository.GetOne(request.ledgerId);
+                var ledger = await ledgerRepository.GetOne(request.LedgerId);
                 if (ledger == null)
                 {
                     return new DtoWrapper<DepositResponse>()
@@ -374,14 +366,14 @@ public class BankService(
                 }
                 else
                 {
-                    ledger.Balance += request.amount;
+                    ledger.Balance += request.Amount;
                     var resultLedger = await ledgerRepository.Save(ledger);
                     var deposit = await depositRepository.Save(
                         new Deposit()
                         {
                             LedgerId = resultLedger.Id,
                             DepositorId = userId,
-                            Amount = request.amount,
+                            Amount = request.Amount,
                             date = DateTime.Now,
                         }
                     );
@@ -416,7 +408,7 @@ public class BankService(
             var transactionResult = await strategy.ExecuteAsync(async () =>
             {
                 using var transaction = bookingRepository.StartBookingTransaction();
-                var ledger = await ledgerRepository.GetOne(request.ledgerId);
+                var ledger = await ledgerRepository.GetOne(request.LedgerId);
                 if (ledger == null)
                 {
                     return new DtoWrapper<DepositResponse>()
@@ -425,7 +417,7 @@ public class BankService(
                         Message = "Ledger doesnt exist",
                     };
                 }
-                if (ledger.Balance < request.amount)
+                if (ledger.Balance < request.Amount)
                 {
                     await transaction.RollbackAsync();
                     return new DtoWrapper<DepositResponse>()
@@ -436,14 +428,14 @@ public class BankService(
                 }
                 else
                 {
-                    ledger.Balance += request.amount;
+                    ledger.Balance += request.Amount;
                     var resultLedger = await ledgerRepository.Save(ledger);
                     var deposit = await depositRepository.Save(
                         new Deposit()
                         {
                             LedgerId = resultLedger.Id,
                             DepositorId = userId,
-                            Amount = request.amount,
+                            Amount = request.Amount,
                             date = DateTime.Now,
                         }
                     );
