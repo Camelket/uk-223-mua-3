@@ -40,7 +40,7 @@ public class EFBookingRepository(AppDbContext context, ILogger<EFBookingReposito
 
     public async Task<Booking?> GetOne(int bookingId)
     {
-        return await context.Set<Booking>().AsNoTracking().FirstAsync(x => x.Id == bookingId);
+        return await context.Set<Booking>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == bookingId);
     }
 
     public async Task<Booking?> GetOneWithLedgers(int bookingId)
@@ -50,7 +50,7 @@ public class EFBookingRepository(AppDbContext context, ILogger<EFBookingReposito
             .AsNoTracking()
             .Include(x => x.Source)
             .Include(x => x.Destination)
-            .FirstAsync(x => x.Id == bookingId);
+            .FirstOrDefaultAsync(x => x.Id == bookingId);
     }
 
     public SqlServerRetryingExecutionStrategy StartRetryExecution(int maxRetry)

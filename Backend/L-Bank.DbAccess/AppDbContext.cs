@@ -15,7 +15,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             e.HasOne(e => e.User)
                 .WithMany(e => e.Ledgers)
-                .HasForeignKey(e => e.UserId);
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             e.ToTable("Ledgers");
         });
@@ -24,7 +25,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             e.HasKey(e => e.Id);
 
-            e.HasDiscriminator(e => e.Role).HasValue(Roles.Administrators).HasValue(Roles.Users);
+            e.Property(e => e.Role).HasConversion<string>();
 
             e.ToTable("Users");
         });

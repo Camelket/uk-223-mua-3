@@ -7,6 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L_Bank.Api.Services;
 
+public class BookingTransactionResult
+{
+    public ServiceStatus status;
+    public string? message;
+    public Booking? booking;
+}
+
 public class BankService(
     IEFBookingRepository bookingRepository,
     IEFUserRepository userRepository,
@@ -166,52 +173,68 @@ public class BankService(
         var strategy = bookingRepository.StartRetryExecution(5);
         try
         {
-            var booking = await strategy.ExecuteAsync(async () =>
+            var transactionResult = await strategy.ExecuteAsync(async () =>
             {
                 using var transaction = bookingRepository.StartBookingTransaction();
                 var result = await _Book(request.SourceId, request.TargetId, request.Amount);
 
-                if (result == null)
+                if (result.status != ServiceStatus.Success)
                 {
                     await transaction.RollbackAsync();
-                    return null;
+                    return result;
                 }
 
                 await transaction.CommitAsync();
                 return result;
             });
 
-            if (booking != null)
+            if (
+                transactionResult.status == ServiceStatus.Success
+                && transactionResult.booking != null
+            )
             {
                 return DtoWrapper<BookingResponse>.WrapDto(
-                    DtoMapper.ToBookingResponse(booking),
+                    DtoMapper.ToBookingResponse(transactionResult.booking),
                     null
                 );
             }
+            return DtoWrapper<BookingResponse>.WrapDto(
+                transactionResult.status,
+                transactionResult.message ?? "Transaction was unable to complete"
+            );
+        }
+        catch (Exception)
+        {
             return DtoWrapper<BookingResponse>.WrapDto(
                 ServiceStatus.TransactionFailed,
                 "Transaction was unable to complete - Booking not recorded"
             );
         }
-        catch (Exception ex)
-        {
-            return DtoWrapper<BookingResponse>.WrapDto(ServiceStatus.Failed, $"{ex.Message}");
-        }
     }
 
-    public async Task<Booking?> _Book(int sourceId, int targetId, decimal amount)
+    public async Task<BookingTransactionResult> _Book(int sourceId, int targetId, decimal amount)
     {
         var sourceLedger = await ledgerRepository.GetOne(sourceId);
         var targetLedger = await ledgerRepository.GetOne(targetId);
 
         if (sourceLedger == null || targetLedger == null)
         {
-            return null;
+            return new BookingTransactionResult()
+            {
+                status = ServiceStatus.NotFound,
+                message = "Source or Target Ledger doesnt exist",
+                booking = null,
+            };
         }
 
         if (sourceLedger.Balance < amount)
         {
-            return null;
+            return new BookingTransactionResult()
+            {
+                status = ServiceStatus.BadRequest,
+                message = "Not enough money to transfer target amount",
+                booking = null,
+            };
         }
 
         sourceLedger.Balance -= amount;
@@ -229,7 +252,12 @@ public class BankService(
         await ledgerRepository.Save(targetLedger);
         await bookingRepository.Save(booking);
 
-        return booking;
+        return new BookingTransactionResult()
+        {
+            status = ServiceStatus.Success,
+            message = null,
+            booking = booking,
+        };
     }
 
     public async Task<bool> LedgerBelongsToUser(int ledgerId, int userId)
