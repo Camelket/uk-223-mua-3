@@ -1,4 +1,5 @@
 using System;
+using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.DbAccess.interfaces;
 using L_Bank_W_Backend.DbAccess.Interfaces;
 using L_Bank_W_Backend.Interfaces;
@@ -15,6 +16,7 @@ public class BankServiceTests
     private readonly Mock<IEFDepositRepository> _depositMock;
     private readonly Mock<IEFUserRepository> _userMock;
     private readonly Mock<ILogger<BankService>> _loggerMock;
+    private IBankService bankService;
 
     public BankServiceTests()
     {
@@ -23,13 +25,26 @@ public class BankServiceTests
         _depositMock = new Mock<IEFDepositRepository>();
         _userMock = new Mock<IEFUserRepository>();
         _loggerMock = new Mock<ILogger<BankService>>();
-
-        Setup();
     }
 
-    private void Setup() { }
+    private void Setup()
+    {
+        bankService = new BankService(
+            _bookingMock.Object,
+            _userMock.Object,
+            _ledgerMock.Object,
+            _depositMock.Object,
+            _loggerMock.Object
+        );
+    }
 
-    public void LedgerBelongsToUser_ReturnsTrue_WhenUserOwnsLedger() { }
+    public async void LedgerBelongsToUser_ReturnsTrue_WhenUserOwnsLedger()
+    {
+        _ledgerMock.Setup(x => x.GetOne(1)).ReturnsAsync(new Ledger() { UserId = 2 });
+        Setup();
+
+        Assert.True(await bankService.LedgerBelongsToUser(1, 2));
+    }
 
     public void LedgerBelongsToUser_ReturnsFalse_WhenUserDoesntOwnLedger() { }
 
