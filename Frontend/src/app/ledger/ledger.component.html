@@ -5,5 +5,17 @@
         <strong>{{ ledger.name }}</strong>: {{ ledger.balance | currency }}
       </li>
     </ul>
-  </div>
-  
+
+    <h2>Transfer</h2>
+    <form [formGroup]="transferForm" (ngSubmit)="makeTransfer()">
+      <label for="source">sourceId: </label>
+      <input id="source" type="text" formControlName="sourceId">
+      <label for="target">targetId: </label>
+      <input id="target" type="text" formControlName="targetId">
+    
+      <label for="amount">amount: </label>
+      <input id="amount" type="text" formControlName="amount">
+      <button type="submit" [disabled]="!transferForm.valid">Submit</button>
+
+    </form>
+</div>
