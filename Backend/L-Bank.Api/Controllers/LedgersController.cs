@@ -9,99 +9,98 @@ namespace L_Bank.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "User")]
-    public class LedgersController : ControllerBase
+    public class LedgersController(IBankService bankService) : ControllerBase
     {
-        private readonly IBankService bankService;
-
-        public LedgersController(IBankService bankService)
-        {
-            this.bankService = bankService;
-        }
+        private readonly IBankService bankService = bankService;
 
         [HttpGet]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<List<LedgerResponse>>> GetLedgers()
         {
-            var user = HttpContext.User;
-
-            var result = await bankService.GetUserWithLedgers(
-                int.Parse(user.Claims.First(c => c.Type == ClaimTypes.UserData).Value)
+            var requestorId = int.Parse(
+                HttpContext.User.Claims.First(c => c.Type == ClaimTypes.UserData).Value
             );
 
-            if (!result.IsSuccess)
+            var result = await bankService.GetUserWithLedgers(requestorId);
+
+            if (result.IsSuccess)
             {
-                return Problem(
-                    detail: result.Message,
-                    statusCode: ServiceStatusUtil.Map(result.Status),
-                    title: "Error"
-                );
+                return Ok(result.Data.Ledgers);
             }
 
-            return Ok(result.Data.Ledgers);
-        }
-
-        [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<LedgerResponse>> GetLedger(int id)
-        {
-            var result = await bankService.GetLedger(id);
-
-            if (!result.IsSuccess)
-            {
-                return Problem(
-                    detail: result.Message,
-                    statusCode: ServiceStatusUtil.Map(result.Status),
-                    title: "Error"
-                );
-            }
-
-            var ledger = result.Data;
-
-            return Ok(
-                new LedgerResponse
-                {
-                    Id = ledger.Id,
-                    Name = ledger.Name,
-                    Balance = ledger.Balance,
-                }
+            return Problem(
+                detail: result.Message,
+                statusCode: ServiceStatusUtil.Map(result.Status),
+                title: "Error"
             );
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<LedgerResponse>>> GetAllLedgers()
         {
             var result = await bankService.GetAllLedgers();
-
-            if (!result.IsSuccess)
+            if (result.IsSuccess)
             {
-                return Problem(
-                    detail: result.Message,
-                    statusCode: ServiceStatusUtil.Map(result.Status),
-                    title: "Error"
-                );
+                return Ok(result.Data);
             }
-            return Ok(result.Data);
+
+            return Problem(
+                detail: result.Message,
+                statusCode: ServiceStatusUtil.Map(result.Status),
+                title: "Error"
+            );
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<LedgerResponse>> GetLedger(int id)
+        {
+            var requestorId = int.Parse(
+                HttpContext.User.Claims.First(c => c.Type == ClaimTypes.UserData).Value
+            );
+
+            if (!HttpContext.User.IsInRole("Admin"))
+            {
+                var isAllowed = await bankService.LedgerBelongsToUser(id, requestorId);
+                if (!isAllowed)
+                {
+                    return Forbid();
+                }
+            }
+
+            var result = await bankService.GetLedger(id);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+
+            return Problem(
+                detail: result.Message,
+                statusCode: ServiceStatusUtil.Map(result.Status),
+                title: "Error"
+            );
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<LedgerResponse>> NewLedger(LedgerRequest request)
         {
-            var userId = int.Parse(
+            var requestorId = int.Parse(
                 HttpContext.User.Claims.First(c => c.Type == ClaimTypes.UserData).Value
             );
-            var result = await bankService.NewLedger(request, userId);
+            var result = await bankService.NewLedger(request, requestorId);
 
-            if (result.Status != ServiceStatus.Success)
+            if (result.IsSuccess)
             {
-                return Problem(
-                    detail: result.Message,
-                    statusCode: ServiceStatusUtil.Map(result.Status),
-                    title: "Error"
-                );
+                return Ok(result.Data);
             }
-            return Ok(result.Data);
+
+            return Problem(
+                detail: result.Message,
+                statusCode: ServiceStatusUtil.Map(result.Status),
+                title: "Error"
+            );
         }
 
         [HttpPost("users/{userId}")]
@@ -131,26 +130,31 @@ namespace L_Bank.Api.Controllers
                 return BadRequest("Invalid ledger id");
             }
 
-            var userId = int.Parse(
+            var requestorId = int.Parse(
                 HttpContext.User.Claims.First(c => c.Type == ClaimTypes.UserData).Value
             );
-            var isOwner = await bankService.LedgerBelongsToUser(ledgerId, userId);
-            if (isOwner == false && !HttpContext.User.IsInRole("Admin"))
+
+            if (!HttpContext.User.IsInRole("Admin"))
             {
-                return Unauthorized();
+                var isAllowed = await bankService.LedgerBelongsToUser(ledgerId, requestorId);
+                if (!isAllowed)
+                {
+                    return Forbid();
+                }
             }
+
             var result = await bankService.GetBookingsForLedger(ledgerId);
 
-            if (result.Status != ServiceStatus.Success)
+            if (result.IsSuccess)
             {
-                return Problem(
-                    detail: result.Message,
-                    statusCode: ServiceStatusUtil.Map(result.Status),
-                    title: "Error"
-                );
+                return Ok(result.Data);
             }
 
-            return Ok(result.Data);
+            return Problem(
+                detail: result.Message,
+                statusCode: ServiceStatusUtil.Map(result.Status),
+                title: "Error"
+            );
         }
     }
 }
