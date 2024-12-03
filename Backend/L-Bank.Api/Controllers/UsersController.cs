@@ -15,7 +15,7 @@ namespace L_Bank.Api.Controllers
 
         [HttpGet("me")]
         [Authorize(Roles = "Admin, User")]
-        public async Task<ActionResult<List<UserResponse>>> GetMyself()
+        public async Task<ActionResult<UserResponse>> GetMyself()
         {
             var requestorId = int.Parse(
                 HttpContext.User.Claims.First(c => c.Type == ClaimTypes.UserData).Value
