@@ -185,11 +185,36 @@ public class BankService(
         }
     }
 
+    public async Task<DtoWrapper<BookingResponse>> NewBookingWithProcedure(BookingRequest request)
+    {
+        var result = await bookingRepository.BookPrc(
+            request.Amount,
+            request.SourceId,
+            request.TargetId
+        );
+        if (result)
+        {
+            return DtoWrapper<BookingResponse>.WrapDto(
+                new BookingResponse()
+                {
+                    Id = 1,
+                    SourceId = request.SourceId,
+                    TargetId = request.TargetId,
+                    TargetName = "",
+                    TransferedAmount = request.Amount,
+                },
+                ""
+            );
+        }
+        return DtoWrapper<BookingResponse>.WrapDto(ServiceStatus.BadRequest, "");
+    }
+
     public async Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request)
     {
         try
         {
             var strategy = bookingRepository.StartRetryExecution(5, TimeSpan.FromSeconds(5));
+
             var transactionResult = await strategy.ExecuteAsync(async () =>
             {
                 using var transaction = bookingRepository.StartBookingTransaction();

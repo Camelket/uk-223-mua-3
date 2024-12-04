@@ -29,4 +29,5 @@ public interface IBankService
     Task<DtoWrapper<List<DepositResponse>>> GetDepositsForLedger(int ledgerId);
     Task<DtoWrapper<List<DepositResponse>>> GetDepositsByUser(int userId);
     Task<DtoWrapper<DepositResponse>> MakeDeposit(DepositRequest request, int userId);
+    Task<DtoWrapper<BookingResponse>> NewBookingWithProcedure(BookingRequest request);
 }
