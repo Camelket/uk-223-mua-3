@@ -56,9 +56,14 @@ public class EFBookingRepository(AppDbContext context, ILogger<EFBookingReposito
             .FirstOrDefaultAsync(x => x.Id == bookingId);
     }
 
-    public SqlServerRetryingExecutionStrategy StartRetryExecution(int maxRetry)
+    public void LockBookingTable()
     {
-        return new SqlServerRetryingExecutionStrategy(context, maxRetry);
+        context.Database.ExecuteSql($"SELECT TOP 1 Id FROM Bookings WITH (TABLOCKX, HOLDLOCK)");
+    }
+
+    public IExecutionStrategy StartRetryExecution(int maxRetry, TimeSpan retryDelay)
+    {
+        return new SqlServerRetryingExecutionStrategy(context, maxRetry, retryDelay, null);
     }
 
     public IDbContextTransaction StartBookingTransaction()
@@ -76,7 +81,7 @@ public class EFBookingRepository(AppDbContext context, ILogger<EFBookingReposito
         {
             context.Add(booking);
         }
-        
+
         await context.SaveChangesAsync();
         return booking;
     }

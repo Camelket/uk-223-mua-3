@@ -21,4 +21,5 @@ public interface IEFLedgerRepository
     Task<decimal> GetTotalMoney();
     Task<Ledger?> GetOne(int id);
     Task<Ledger> Save(Ledger ledger);
+    void LockLedgersTable();
 }

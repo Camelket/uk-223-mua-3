@@ -48,4 +48,9 @@ public class EFDepositRepository(AppDbContext context) : IEFDepositRepository
         await context.SaveChangesAsync();
         return deposit;
     }
+
+    public void LockDepositTable()
+    {
+        context.Database.ExecuteSql($"SELECT TOP 1 Id FROM Deposits WITH (TABLOCKX, HOLDLOCK)");
+    }
 }

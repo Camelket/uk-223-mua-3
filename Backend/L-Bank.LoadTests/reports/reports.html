@@ -441,92 +441,85 @@ const viewModel = {
         "ScenarioName": "request_transaction",
         "Ok": {
           "Request": {
-            "Count": 2,
-            "RPS": 0.1,
-            "Percent": 0
+            "Count": 101,
+            "RPS": 10.1,
+            "Percent": 92
           },
           "Latency": {
-            "MinMs": 807.89,
-            "MeanMs": 973.44,
-            "MaxMs": 1138.85,
-            "Percent50": 807.94,
-            "Percent75": 1139.71,
-            "Percent95": 1139.71,
-            "Percent99": 1139.71,
-            "StdDev": 165.76,
+            "MinMs": 34.23,
+            "MeanMs": 26430.62,
+            "MaxMs": 32256.08,
+            "Percent50": 28835.84,
+            "Percent75": 29671.42,
+            "Percent95": 30654.46,
+            "Percent99": 31309.82,
+            "StdDev": 7961.34,
             "LatencyCount": {
-              "LessOrEq800": 0,
-              "More800Less1200": 2,
-              "MoreOrEq1200": 0
+              "LessOrEq800": 7,
+              "More800Less1200": 0,
+              "MoreOrEq1200": 94
             }
           },
           "DataTransfer": {
-            "MinBytes": 704,
-            "MeanBytes": 704,
-            "MaxBytes": 705,
-            "Percent50": 704,
-            "Percent75": 705,
-            "Percent95": 705,
-            "Percent99": 705,
-            "StdDev": 0.5,
-            "AllBytes": 1409
+            "MinBytes": 698,
+            "MeanBytes": 702,
+            "MaxBytes": 703,
+            "Percent50": 703,
+            "Percent75": 703,
+            "Percent95": 703,
+            "Percent99": 703,
+            "StdDev": 0.94,
+            "AllBytes": 70954
           },
           "StatusCodes": [
             {
               "StatusCode": "OK",
               "IsError": false,
               "Message": "",
-              "Count": 2,
-              "Percent": 0
+              "Count": 101,
+              "Percent": 92
             }
           ]
         },
         "Fail": {
           "Request": {
-            "Count": 2998,
-            "RPS": 99.9,
-            "Percent": 100
+            "Count": 9,
+            "RPS": 0.9,
+            "Percent": 8
           },
           "Latency": {
-            "MinMs": 4024.67,
-            "MeanMs": 44706.71,
-            "MaxMs": 93306.94,
-            "Percent50": 44826.62,
-            "Percent75": 85000.19,
-            "Percent95": 90767.36,
-            "Percent99": 92864.51,
-            "StdDev": 39645.01,
+            "MinMs": 20687.74,
+            "MeanMs": 21953.65,
+            "MaxMs": 22716.94,
+            "Percent50": 22069.25,
+            "Percent75": 22511.62,
+            "Percent95": 22724.61,
+            "Percent99": 22724.61,
+            "StdDev": 683.44,
             "LatencyCount": {
               "LessOrEq800": 0,
               "More800Less1200": 0,
-              "MoreOrEq1200": 2998
+              "MoreOrEq1200": 9
             }
           },
           "DataTransfer": {
-            "MinBytes": 768,
-            "MeanBytes": 769,
-            "MaxBytes": 770,
-            "Percent50": 770,
-            "Percent75": 770,
-            "Percent95": 770,
-            "Percent99": 770,
-            "StdDev": 0.44,
-            "AllBytes": 62352
+            "MinBytes": 0,
+            "MeanBytes": 0,
+            "MaxBytes": 0,
+            "Percent50": 0,
+            "Percent75": 0,
+            "Percent95": 0,
+            "Percent99": 0,
+            "StdDev": 0,
+            "AllBytes": 0
           },
           "StatusCodes": [
             {
               "StatusCode": "-101",
               "IsError": true,
-              "Message": "No connection could be made because the target machine actively refused it. (localhost:7015)",
-              "Count": 2917,
-              "Percent": 97
-            },
-            {
-              "StatusCode": "Conflict",
-              "IsError": true,
-              "Message": "",
-              "Count": 81,
-              "Percent": 3
+              "Message": "An error occurred while sending the request.",
+              "Count": 9,
+              "Percent": 8
             }
           ]
         },
@@ -535,92 +528,85 @@ const viewModel = {
             "StepName": "global information",
             "Ok": {
               "Request": {
-                "Count": 2,
-                "RPS": 0.1,
-                "Percent": 0
+                "Count": 101,
+                "RPS": 10.1,
+                "Percent": 92
               },
               "Latency": {
-                "MinMs": 807.89,
-                "MeanMs": 973.44,
-                "MaxMs": 1138.85,
-                "Percent50": 807.94,
-                "Percent75": 1139.71,
-                "Percent95": 1139.71,
-                "Percent99": 1139.71,
-                "StdDev": 165.76,
+                "MinMs": 34.23,
+                "MeanMs": 26430.62,
+                "MaxMs": 32256.08,
+                "Percent50": 28835.84,
+                "Percent75": 29671.42,
+                "Percent95": 30654.46,
+                "Percent99": 31309.82,
+                "StdDev": 7961.34,
                 "LatencyCount": {
-                  "LessOrEq800": 0,
-                  "More800Less1200": 2,
-                  "MoreOrEq1200": 0
+                  "LessOrEq800": 7,
+                  "More800Less1200": 0,
+                  "MoreOrEq1200": 94
                 }
               },
               "DataTransfer": {
-                "MinBytes": 704,
-                "MeanBytes": 704,
-                "MaxBytes": 705,
-                "Percent50": 704,
-                "Percent75": 705,
-                "Percent95": 705,
-                "Percent99": 705,
-                "StdDev": 0.5,
-                "AllBytes": 1409
+                "MinBytes": 698,
+                "MeanBytes": 702,
+                "MaxBytes": 703,
+                "Percent50": 703,
+                "Percent75": 703,
+                "Percent95": 703,
+                "Percent99": 703,
+                "StdDev": 0.94,
+                "AllBytes": 70954
               },
               "StatusCodes": [
                 {
                   "StatusCode": "OK",
                   "IsError": false,
                   "Message": "",
-                  "Count": 2,
-                  "Percent": 0
+                  "Count": 101,
+                  "Percent": 92
                 }
               ]
             },
             "Fail": {
               "Request": {
-                "Count": 2998,
-                "RPS": 99.9,
-                "Percent": 100
+                "Count": 9,
+                "RPS": 0.9,
+                "Percent": 8
               },
               "Latency": {
-                "MinMs": 4024.67,
-                "MeanMs": 44706.71,
-                "MaxMs": 93306.94,
-                "Percent50": 44826.62,
-                "Percent75": 85000.19,
-                "Percent95": 90767.36,
-                "Percent99": 92864.51,
-                "StdDev": 39645.01,
+                "MinMs": 20687.74,
+                "MeanMs": 21953.65,
+                "MaxMs": 22716.94,
+                "Percent50": 22069.25,
+                "Percent75": 22511.62,
+                "Percent95": 22724.61,
+                "Percent99": 22724.61,
+                "StdDev": 683.44,
                 "LatencyCount": {
                   "LessOrEq800": 0,
                   "More800Less1200": 0,
-                  "MoreOrEq1200": 2998
+                  "MoreOrEq1200": 9
                 }
               },
               "DataTransfer": {
-                "MinBytes": 768,
-                "MeanBytes": 769,
-                "MaxBytes": 770,
-                "Percent50": 770,
-                "Percent75": 770,
-                "Percent95": 770,
-                "Percent99": 770,
-                "StdDev": 0.44,
-                "AllBytes": 62352
+                "MinBytes": 0,
+                "MeanBytes": 0,
+                "MaxBytes": 0,
+                "Percent50": 0,
+                "Percent75": 0,
+                "Percent95": 0,
+                "Percent99": 0,
+                "StdDev": 0,
+                "AllBytes": 0
               },
               "StatusCodes": [
                 {
                   "StatusCode": "-101",
                   "IsError": true,
-                  "Message": "No connection could be made because the target machine actively refused it. (localhost:7015)",
-                  "Count": 2917,
-                  "Percent": 97
-                },
-                {
-                  "StatusCode": "Conflict",
-                  "IsError": true,
-                  "Message": "",
-                  "Count": 81,
-                  "Percent": 3
+                  "Message": "An error occurred while sending the request.",
+                  "Count": 9,
+                  "Percent": 8
                 }
               ]
             },
@@ -629,14 +615,14 @@ const viewModel = {
         ],
         "LoadSimulationStats": {
           "SimulationName": "inject",
-          "Value": 100
+          "Value": 11
         },
         "CurrentOperation": "Complete",
-        "AllRequestCount": 3000,
-        "AllOkCount": 2,
-        "AllFailCount": 2998,
-        "AllBytes": 63761,
-        "Duration": "00:00:30",
+        "AllRequestCount": 110,
+        "AllOkCount": 101,
+        "AllFailCount": 9,
+        "AllBytes": 70954,
+        "Duration": "00:00:10",
         "SortIndex": 0
       }
     ],
@@ -653,18 +639,18 @@ const viewModel = {
       "NBomberVersion": "5.8.1"
     },
     "TestInfo": {
-      "SessionId": "2024-12-03_21.24.53_session_98fec4c0",
+      "SessionId": "2024-12-04_09.15.72_session_158188a4",
       "TestSuite": "nbomber_default_test_suite_name",
       "TestName": "nbomber_default_test_name",
       "ClusterId": "",
-      "Created": "2024-12-03T21:24:51.4484464Z"
+      "Created": "2024-12-04T09:15:36.6461910Z"
     },
     "ReportFiles": [],
-    "AllRequestCount": 3000,
-    "AllOkCount": 2,
-    "AllFailCount": 2998,
-    "AllBytes": 63761,
-    "Duration": "00:00:30"
+    "AllRequestCount": 110,
+    "AllOkCount": 101,
+    "AllFailCount": 9,
+    "AllBytes": 70954,
+    "Duration": "00:00:10"
   },
   "TimeLineHistory": [
     {
@@ -674,42 +660,42 @@ const viewModel = {
           "ScenarioName": "request_transaction",
           "Ok": {
             "Request": {
-              "Count": 2,
-              "RPS": 0.4,
+              "Count": 8,
+              "RPS": 1.6,
               "Percent": 100
             },
             "Latency": {
-              "MinMs": 807.89,
-              "MeanMs": 973.44,
-              "MaxMs": 1138.85,
-              "Percent50": 807.94,
-              "Percent75": 1139.71,
-              "Percent95": 1139.71,
-              "Percent99": 1139.71,
-              "StdDev": 165.76,
+              "MinMs": 34.23,
+              "MeanMs": 350.49,
+              "MaxMs": 2461.13,
+              "Percent50": 44.26,
+              "Percent75": 47.23,
+              "Percent95": 2461.7,
+              "Percent99": 2461.7,
+              "StdDev": 797.72,
               "LatencyCount": {
-                "LessOrEq800": 0,
-                "More800Less1200": 2,
-                "MoreOrEq1200": 0
+                "LessOrEq800": 7,
+                "More800Less1200": 0,
+                "MoreOrEq1200": 1
               }
             },
             "DataTransfer": {
-              "MinBytes": 704,
-              "MeanBytes": 704,
-              "MaxBytes": 705,
-              "Percent50": 704,
-              "Percent75": 705,
-              "Percent95": 705,
-              "Percent99": 705,
-              "StdDev": 0.5,
-              "AllBytes": 1409
+              "MinBytes": 701,
+              "MeanBytes": 702,
+              "MaxBytes": 703,
+              "Percent50": 703,
+              "Percent75": 703,
+              "Percent95": 703,
+              "Percent99": 703,
+              "StdDev": 0.97,
+              "AllBytes": 5618
             },
             "StatusCodes": [
               {
                 "StatusCode": "OK",
                 "IsError": false,
                 "Message": "",
-                "Count": 2,
+                "Count": 8,
                 "Percent": 100
               }
             ]
@@ -753,42 +739,42 @@ const viewModel = {
               "StepName": "global information",
               "Ok": {
                 "Request": {
-                  "Count": 2,
-                  "RPS": 0.4,
+                  "Count": 8,
+                  "RPS": 1.6,
                   "Percent": 100
                 },
                 "Latency": {
-                  "MinMs": 807.89,
-                  "MeanMs": 973.44,
-                  "MaxMs": 1138.85,
-                  "Percent50": 807.94,
-                  "Percent75": 1139.71,
-                  "Percent95": 1139.71,
-                  "Percent99": 1139.71,
-                  "StdDev": 165.76,
+                  "MinMs": 34.23,
+                  "MeanMs": 350.49,
+                  "MaxMs": 2461.13,
+                  "Percent50": 44.26,
+                  "Percent75": 47.23,
+                  "Percent95": 2461.7,
+                  "Percent99": 2461.7,
+                  "StdDev": 797.72,
                   "LatencyCount": {
-                    "LessOrEq800": 0,
-                    "More800Less1200": 2,
-                    "MoreOrEq1200": 0
+                    "LessOrEq800": 7,
+                    "More800Less1200": 0,
+                    "MoreOrEq1200": 1
                   }
                 },
                 "DataTransfer": {
-                  "MinBytes": 704,
-                  "MeanBytes": 704,
-                  "MaxBytes": 705,
-                  "Percent50": 704,
-                  "Percent75": 705,
-                  "Percent95": 705,
-                  "Percent99": 705,
-                  "StdDev": 0.5,
-                  "AllBytes": 1409
+                  "MinBytes": 701,
+                  "MeanBytes": 702,
+                  "MaxBytes": 703,
+                  "Percent50": 703,
+                  "Percent75": 703,
+                  "Percent95": 703,
+                  "Percent99": 703,
+                  "StdDev": 0.97,
+                  "AllBytes": 5618
                 },
                 "StatusCodes": [
                   {
                     "StatusCode": "OK",
                     "IsError": false,
                     "Message": "",
-                    "Count": 2,
+                    "Count": 8,
                     "Percent": 100
                   }
                 ]
@@ -832,13 +818,13 @@ const viewModel = {
           ],
           "LoadSimulationStats": {
             "SimulationName": "inject",
-            "Value": 100
+            "Value": 11
           },
           "CurrentOperation": "Bombing",
-          "AllRequestCount": 2,
-          "AllOkCount": 2,
+          "AllRequestCount": 8,
+          "AllOkCount": 8,
           "AllFailCount": 0,
-          "AllBytes": 1409,
+          "AllBytes": 5618,
           "Duration": "00:00:05",
           "SortIndex": 0
         }
@@ -851,37 +837,45 @@ const viewModel = {
           "ScenarioName": "request_transaction",
           "Ok": {
             "Request": {
-              "Count": 0,
-              "RPS": 0,
-              "Percent": 0
+              "Count": 1,
+              "RPS": 0.2,
+              "Percent": 100
             },
             "Latency": {
-              "MinMs": 0,
-              "MeanMs": 0,
-              "MaxMs": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
+              "MinMs": 10772.57,
+              "MeanMs": 10776.58,
+              "MaxMs": 10772.57,
+              "Percent50": 10780.67,
+              "Percent75": 10780.67,
+              "Percent95": 10780.67,
+              "Percent99": 10780.67,
               "StdDev": 0,
               "LatencyCount": {
                 "LessOrEq800": 0,
                 "More800Less1200": 0,
-                "MoreOrEq1200": 0
+                "MoreOrEq1200": 1
               }
             },
             "DataTransfer": {
-              "MinBytes": 0,
-              "MeanBytes": 0,
-              "MaxBytes": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
+              "MinBytes": 701,
+              "MeanBytes": 701,
+              "MaxBytes": 701,
+              "Percent50": 701,
+              "Percent75": 701,
+              "Percent95": 701,
+              "Percent99": 701,
               "StdDev": 0,
-              "AllBytes": 0
+              "AllBytes": 701
             },
-            "StatusCodes": []
+            "StatusCodes": [
+              {
+                "StatusCode": "OK",
+                "IsError": false,
+                "Message": "",
+                "Count": 1,
+                "Percent": 100
+              }
+            ]
           },
           "Fail": {
             "Request": {
@@ -922,37 +916,45 @@ const viewModel = {
               "StepName": "global information",
               "Ok": {
                 "Request": {
-                  "Count": 0,
-                  "RPS": 0,
-                  "Percent": 0
+                  "Count": 1,
+                  "RPS": 0.2,
+                  "Percent": 100
                 },
                 "Latency": {
-                  "MinMs": 0,
-                  "MeanMs": 0,
-                  "MaxMs": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
+                  "MinMs": 10772.57,
+                  "MeanMs": 10776.58,
+                  "MaxMs": 10772.57,
+                  "Percent50": 10780.67,
+                  "Percent75": 10780.67,
+                  "Percent95": 10780.67,
+                  "Percent99": 10780.67,
                   "StdDev": 0,
                   "LatencyCount": {
                     "LessOrEq800": 0,
                     "More800Less1200": 0,
-                    "MoreOrEq1200": 0
+                    "MoreOrEq1200": 1
                   }
                 },
                 "DataTransfer": {
-                  "MinBytes": 0,
-                  "MeanBytes": 0,
-                  "MaxBytes": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
+                  "MinBytes": 701,
+                  "MeanBytes": 701,
+                  "MaxBytes": 701,
+                  "Percent50": 701,
+                  "Percent75": 701,
+                  "Percent95": 701,
+                  "Percent99": 701,
                   "StdDev": 0,
-                  "AllBytes": 0
+                  "AllBytes": 701
                 },
-                "StatusCodes": []
+                "StatusCodes": [
+                  {
+                    "StatusCode": "OK",
+                    "IsError": false,
+                    "Message": "",
+                    "Count": 1,
+                    "Percent": 100
+                  }
+                ]
               },
               "Fail": {
                 "Request": {
@@ -993,706 +995,14 @@ const viewModel = {
           ],
           "LoadSimulationStats": {
             "SimulationName": "inject",
-            "Value": 100
+            "Value": 11
           },
           "CurrentOperation": "Bombing",
-          "AllRequestCount": 0,
-          "AllOkCount": 0,
+          "AllRequestCount": 1,
+          "AllOkCount": 1,
           "AllFailCount": 0,
-          "AllBytes": 0,
+          "AllBytes": 701,
           "Duration": "00:00:10",
-          "SortIndex": 0
-        }
-      ]
-    },
-    {
-      "Timestamp": "00:00:15",
-      "ScenarioStats": [
-        {
-          "ScenarioName": "request_transaction",
-          "Ok": {
-            "Request": {
-              "Count": 0,
-              "RPS": 0,
-              "Percent": 0
-            },
-            "Latency": {
-              "MinMs": 0,
-              "MeanMs": 0,
-              "MaxMs": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "LatencyCount": {
-                "LessOrEq800": 0,
-                "More800Less1200": 0,
-                "MoreOrEq1200": 0
-              }
-            },
-            "DataTransfer": {
-              "MinBytes": 0,
-              "MeanBytes": 0,
-              "MaxBytes": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "AllBytes": 0
-            },
-            "StatusCodes": []
-          },
-          "Fail": {
-            "Request": {
-              "Count": 0,
-              "RPS": 0,
-              "Percent": 0
-            },
-            "Latency": {
-              "MinMs": 0,
-              "MeanMs": 0,
-              "MaxMs": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "LatencyCount": {
-                "LessOrEq800": 0,
-                "More800Less1200": 0,
-                "MoreOrEq1200": 0
-              }
-            },
-            "DataTransfer": {
-              "MinBytes": 0,
-              "MeanBytes": 0,
-              "MaxBytes": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "AllBytes": 0
-            },
-            "StatusCodes": []
-          },
-          "StepStats": [
-            {
-              "StepName": "global information",
-              "Ok": {
-                "Request": {
-                  "Count": 0,
-                  "RPS": 0,
-                  "Percent": 0
-                },
-                "Latency": {
-                  "MinMs": 0,
-                  "MeanMs": 0,
-                  "MaxMs": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "LatencyCount": {
-                    "LessOrEq800": 0,
-                    "More800Less1200": 0,
-                    "MoreOrEq1200": 0
-                  }
-                },
-                "DataTransfer": {
-                  "MinBytes": 0,
-                  "MeanBytes": 0,
-                  "MaxBytes": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "AllBytes": 0
-                },
-                "StatusCodes": []
-              },
-              "Fail": {
-                "Request": {
-                  "Count": 0,
-                  "RPS": 0,
-                  "Percent": 0
-                },
-                "Latency": {
-                  "MinMs": 0,
-                  "MeanMs": 0,
-                  "MaxMs": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "LatencyCount": {
-                    "LessOrEq800": 0,
-                    "More800Less1200": 0,
-                    "MoreOrEq1200": 0
-                  }
-                },
-                "DataTransfer": {
-                  "MinBytes": 0,
-                  "MeanBytes": 0,
-                  "MaxBytes": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "AllBytes": 0
-                },
-                "StatusCodes": []
-              },
-              "SortIndex": 0
-            }
-          ],
-          "LoadSimulationStats": {
-            "SimulationName": "inject",
-            "Value": 100
-          },
-          "CurrentOperation": "Bombing",
-          "AllRequestCount": 0,
-          "AllOkCount": 0,
-          "AllFailCount": 0,
-          "AllBytes": 0,
-          "Duration": "00:00:15",
-          "SortIndex": 0
-        }
-      ]
-    },
-    {
-      "Timestamp": "00:00:20",
-      "ScenarioStats": [
-        {
-          "ScenarioName": "request_transaction",
-          "Ok": {
-            "Request": {
-              "Count": 0,
-              "RPS": 0,
-              "Percent": 0
-            },
-            "Latency": {
-              "MinMs": 0,
-              "MeanMs": 0,
-              "MaxMs": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "LatencyCount": {
-                "LessOrEq800": 0,
-                "More800Less1200": 0,
-                "MoreOrEq1200": 0
-              }
-            },
-            "DataTransfer": {
-              "MinBytes": 0,
-              "MeanBytes": 0,
-              "MaxBytes": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "AllBytes": 0
-            },
-            "StatusCodes": []
-          },
-          "Fail": {
-            "Request": {
-              "Count": 499,
-              "RPS": 99.8,
-              "Percent": 100
-            },
-            "Latency": {
-              "MinMs": 4024.79,
-              "MeanMs": 4063.85,
-              "MaxMs": 4112.97,
-              "Percent50": 4063.23,
-              "Percent75": 4075.52,
-              "Percent95": 4093.95,
-              "Percent99": 4108.29,
-              "StdDev": 16.49,
-              "LatencyCount": {
-                "LessOrEq800": 0,
-                "More800Less1200": 0,
-                "MoreOrEq1200": 499
-              }
-            },
-            "DataTransfer": {
-              "MinBytes": 0,
-              "MeanBytes": 0,
-              "MaxBytes": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "AllBytes": 0
-            },
-            "StatusCodes": [
-              {
-                "StatusCode": "-101",
-                "IsError": true,
-                "Message": "No connection could be made because the target machine actively refused it. (localhost:7015)",
-                "Count": 499,
-                "Percent": 100
-              }
-            ]
-          },
-          "StepStats": [
-            {
-              "StepName": "global information",
-              "Ok": {
-                "Request": {
-                  "Count": 0,
-                  "RPS": 0,
-                  "Percent": 0
-                },
-                "Latency": {
-                  "MinMs": 0,
-                  "MeanMs": 0,
-                  "MaxMs": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "LatencyCount": {
-                    "LessOrEq800": 0,
-                    "More800Less1200": 0,
-                    "MoreOrEq1200": 0
-                  }
-                },
-                "DataTransfer": {
-                  "MinBytes": 0,
-                  "MeanBytes": 0,
-                  "MaxBytes": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "AllBytes": 0
-                },
-                "StatusCodes": []
-              },
-              "Fail": {
-                "Request": {
-                  "Count": 499,
-                  "RPS": 99.8,
-                  "Percent": 100
-                },
-                "Latency": {
-                  "MinMs": 4024.79,
-                  "MeanMs": 4063.85,
-                  "MaxMs": 4112.97,
-                  "Percent50": 4063.23,
-                  "Percent75": 4075.52,
-                  "Percent95": 4093.95,
-                  "Percent99": 4108.29,
-                  "StdDev": 16.49,
-                  "LatencyCount": {
-                    "LessOrEq800": 0,
-                    "More800Less1200": 0,
-                    "MoreOrEq1200": 499
-                  }
-                },
-                "DataTransfer": {
-                  "MinBytes": 0,
-                  "MeanBytes": 0,
-                  "MaxBytes": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "AllBytes": 0
-                },
-                "StatusCodes": [
-                  {
-                    "StatusCode": "-101",
-                    "IsError": true,
-                    "Message": "No connection could be made because the target machine actively refused it. (localhost:7015)",
-                    "Count": 499,
-                    "Percent": 100
-                  }
-                ]
-              },
-              "SortIndex": 0
-            }
-          ],
-          "LoadSimulationStats": {
-            "SimulationName": "inject",
-            "Value": 100
-          },
-          "CurrentOperation": "Bombing",
-          "AllRequestCount": 499,
-          "AllOkCount": 0,
-          "AllFailCount": 499,
-          "AllBytes": 0,
-          "Duration": "00:00:20",
-          "SortIndex": 0
-        }
-      ]
-    },
-    {
-      "Timestamp": "00:00:25",
-      "ScenarioStats": [
-        {
-          "ScenarioName": "request_transaction",
-          "Ok": {
-            "Request": {
-              "Count": 0,
-              "RPS": 0,
-              "Percent": 0
-            },
-            "Latency": {
-              "MinMs": 0,
-              "MeanMs": 0,
-              "MaxMs": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "LatencyCount": {
-                "LessOrEq800": 0,
-                "More800Less1200": 0,
-                "MoreOrEq1200": 0
-              }
-            },
-            "DataTransfer": {
-              "MinBytes": 0,
-              "MeanBytes": 0,
-              "MaxBytes": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "AllBytes": 0
-            },
-            "StatusCodes": []
-          },
-          "Fail": {
-            "Request": {
-              "Count": 500,
-              "RPS": 100,
-              "Percent": 100
-            },
-            "Latency": {
-              "MinMs": 4024.67,
-              "MeanMs": 4063.36,
-              "MaxMs": 4115.07,
-              "Percent50": 4063.23,
-              "Percent75": 4073.47,
-              "Percent95": 4087.81,
-              "Percent99": 4096,
-              "StdDev": 13.76,
-              "LatencyCount": {
-                "LessOrEq800": 0,
-                "More800Less1200": 0,
-                "MoreOrEq1200": 500
-              }
-            },
-            "DataTransfer": {
-              "MinBytes": 0,
-              "MeanBytes": 0,
-              "MaxBytes": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "AllBytes": 0
-            },
-            "StatusCodes": [
-              {
-                "StatusCode": "-101",
-                "IsError": true,
-                "Message": "No connection could be made because the target machine actively refused it. (localhost:7015)",
-                "Count": 500,
-                "Percent": 100
-              }
-            ]
-          },
-          "StepStats": [
-            {
-              "StepName": "global information",
-              "Ok": {
-                "Request": {
-                  "Count": 0,
-                  "RPS": 0,
-                  "Percent": 0
-                },
-                "Latency": {
-                  "MinMs": 0,
-                  "MeanMs": 0,
-                  "MaxMs": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "LatencyCount": {
-                    "LessOrEq800": 0,
-                    "More800Less1200": 0,
-                    "MoreOrEq1200": 0
-                  }
-                },
-                "DataTransfer": {
-                  "MinBytes": 0,
-                  "MeanBytes": 0,
-                  "MaxBytes": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "AllBytes": 0
-                },
-                "StatusCodes": []
-              },
-              "Fail": {
-                "Request": {
-                  "Count": 500,
-                  "RPS": 100,
-                  "Percent": 100
-                },
-                "Latency": {
-                  "MinMs": 4024.67,
-                  "MeanMs": 4063.36,
-                  "MaxMs": 4115.07,
-                  "Percent50": 4063.23,
-                  "Percent75": 4073.47,
-                  "Percent95": 4087.81,
-                  "Percent99": 4096,
-                  "StdDev": 13.76,
-                  "LatencyCount": {
-                    "LessOrEq800": 0,
-                    "More800Less1200": 0,
-                    "MoreOrEq1200": 500
-                  }
-                },
-                "DataTransfer": {
-                  "MinBytes": 0,
-                  "MeanBytes": 0,
-                  "MaxBytes": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "AllBytes": 0
-                },
-                "StatusCodes": [
-                  {
-                    "StatusCode": "-101",
-                    "IsError": true,
-                    "Message": "No connection could be made because the target machine actively refused it. (localhost:7015)",
-                    "Count": 500,
-                    "Percent": 100
-                  }
-                ]
-              },
-              "SortIndex": 0
-            }
-          ],
-          "LoadSimulationStats": {
-            "SimulationName": "inject",
-            "Value": 100
-          },
-          "CurrentOperation": "Bombing",
-          "AllRequestCount": 500,
-          "AllOkCount": 0,
-          "AllFailCount": 500,
-          "AllBytes": 0,
-          "Duration": "00:00:25",
-          "SortIndex": 0
-        }
-      ]
-    },
-    {
-      "Timestamp": "00:00:30",
-      "ScenarioStats": [
-        {
-          "ScenarioName": "request_transaction",
-          "Ok": {
-            "Request": {
-              "Count": 0,
-              "RPS": 0,
-              "Percent": 0
-            },
-            "Latency": {
-              "MinMs": 0,
-              "MeanMs": 0,
-              "MaxMs": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "LatencyCount": {
-                "LessOrEq800": 0,
-                "More800Less1200": 0,
-                "MoreOrEq1200": 0
-              }
-            },
-            "DataTransfer": {
-              "MinBytes": 0,
-              "MeanBytes": 0,
-              "MaxBytes": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "AllBytes": 0
-            },
-            "StatusCodes": []
-          },
-          "Fail": {
-            "Request": {
-              "Count": 419,
-              "RPS": 83.8,
-              "Percent": 100
-            },
-            "Latency": {
-              "MinMs": 4027.3,
-              "MeanMs": 4063.3,
-              "MaxMs": 4110.04,
-              "Percent50": 4063.23,
-              "Percent75": 4075.52,
-              "Percent95": 4087.81,
-              "Percent99": 4096,
-              "StdDev": 14.25,
-              "LatencyCount": {
-                "LessOrEq800": 0,
-                "More800Less1200": 0,
-                "MoreOrEq1200": 419
-              }
-            },
-            "DataTransfer": {
-              "MinBytes": 0,
-              "MeanBytes": 0,
-              "MaxBytes": 0,
-              "Percent50": 0,
-              "Percent75": 0,
-              "Percent95": 0,
-              "Percent99": 0,
-              "StdDev": 0,
-              "AllBytes": 0
-            },
-            "StatusCodes": [
-              {
-                "StatusCode": "-101",
-                "IsError": true,
-                "Message": "No connection could be made because the target machine actively refused it. (localhost:7015)",
-                "Count": 419,
-                "Percent": 100
-              }
-            ]
-          },
-          "StepStats": [
-            {
-              "StepName": "global information",
-              "Ok": {
-                "Request": {
-                  "Count": 0,
-                  "RPS": 0,
-                  "Percent": 0
-                },
-                "Latency": {
-                  "MinMs": 0,
-                  "MeanMs": 0,
-                  "MaxMs": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "LatencyCount": {
-                    "LessOrEq800": 0,
-                    "More800Less1200": 0,
-                    "MoreOrEq1200": 0
-                  }
-                },
-                "DataTransfer": {
-                  "MinBytes": 0,
-                  "MeanBytes": 0,
-                  "MaxBytes": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "AllBytes": 0
-                },
-                "StatusCodes": []
-              },
-              "Fail": {
-                "Request": {
-                  "Count": 419,
-                  "RPS": 83.8,
-                  "Percent": 100
-                },
-                "Latency": {
-                  "MinMs": 4027.3,
-                  "MeanMs": 4063.3,
-                  "MaxMs": 4110.04,
-                  "Percent50": 4063.23,
-                  "Percent75": 4075.52,
-                  "Percent95": 4087.81,
-                  "Percent99": 4096,
-                  "StdDev": 14.25,
-                  "LatencyCount": {
-                    "LessOrEq800": 0,
-                    "More800Less1200": 0,
-                    "MoreOrEq1200": 419
-                  }
-                },
-                "DataTransfer": {
-                  "MinBytes": 0,
-                  "MeanBytes": 0,
-                  "MaxBytes": 0,
-                  "Percent50": 0,
-                  "Percent75": 0,
-                  "Percent95": 0,
-                  "Percent99": 0,
-                  "StdDev": 0,
-                  "AllBytes": 0
-                },
-                "StatusCodes": [
-                  {
-                    "StatusCode": "-101",
-                    "IsError": true,
-                    "Message": "No connection could be made because the target machine actively refused it. (localhost:7015)",
-                    "Count": 419,
-                    "Percent": 100
-                  }
-                ]
-              },
-              "SortIndex": 0
-            }
-          ],
-          "LoadSimulationStats": {
-            "SimulationName": "inject",
-            "Value": 100
-          },
-          "CurrentOperation": "Bombing",
-          "AllRequestCount": 419,
-          "AllOkCount": 0,
-          "AllFailCount": 419,
-          "AllBytes": 0,
-          "Duration": "00:00:30",
           "SortIndex": 0
         }
       ]
@@ -1705,23 +1015,7 @@ const viewModel = {
       "MetricType": "Gauge",
       "History": [
         {
-          "Value": 0.37,
-          "Timestamp": "00:00:30"
-        },
-        {
-          "Value": 0.37,
-          "Timestamp": "00:00:25"
-        },
-        {
-          "Value": 0.15,
-          "Timestamp": "00:00:20"
-        },
-        {
-          "Value": 0.09,
-          "Timestamp": "00:00:15"
-        },
-        {
-          "Value": 0.12,
+          "Value": 0.14,
           "Timestamp": "00:00:10"
         },
         {
@@ -1730,12 +1024,12 @@ const viewModel = {
         }
       ],
       "Percentiles": {
-        "Mean": 0.14,
-        "Max": 0.92,
-        "Percent50": 0.01,
-        "Percent75": 0.15,
-        "Percent95": 0.39,
-        "Percent99": 0.92
+        "Mean": 0.04,
+        "Max": 0.14,
+        "Percent50": 0,
+        "Percent75": 0.06,
+        "Percent95": 0.14,
+        "Percent99": 0.14
       }
     },
     {
@@ -1744,37 +1038,21 @@ const viewModel = {
       "MetricType": "Gauge",
       "History": [
         {
-          "Value": 0.22,
-          "Timestamp": "00:00:30"
-        },
-        {
-          "Value": 0.22,
-          "Timestamp": "00:00:25"
-        },
-        {
-          "Value": 0.22,
-          "Timestamp": "00:00:20"
-        },
-        {
-          "Value": 0.22,
-          "Timestamp": "00:00:15"
-        },
-        {
-          "Value": 0.2,
+          "Value": 0.09,
           "Timestamp": "00:00:10"
         },
         {
-          "Value": 0.2,
+          "Value": 0.06,
           "Timestamp": "00:00:05"
         }
       ],
       "Percentiles": {
-        "Mean": 1.14,
-        "Max": 1.79,
-        "Percent50": 1.46,
-        "Percent75": 1.79,
-        "Percent95": 1.79,
-        "Percent99": 1.79
+        "Mean": 0.12,
+        "Max": 0.17,
+        "Percent50": 0.12,
+        "Percent75": 0.13,
+        "Percent95": 0.17,
+        "Percent99": 0.17
       }
     },
     {
@@ -1783,37 +1061,21 @@ const viewModel = {
       "MetricType": "Gauge",
       "History": [
         {
-          "Value": 0.49,
-          "Timestamp": "00:00:30"
-        },
-        {
-          "Value": 0.49,
-          "Timestamp": "00:00:25"
-        },
-        {
-          "Value": 0.49,
-          "Timestamp": "00:00:20"
-        },
-        {
-          "Value": 0.45,
-          "Timestamp": "00:00:15"
-        },
-        {
-          "Value": 0.31,
+          "Value": 0.07,
           "Timestamp": "00:00:10"
         },
         {
-          "Value": 0.2,
+          "Value": 0.04,
           "Timestamp": "00:00:05"
         }
       ],
       "Percentiles": {
-        "Mean": 0.99,
-        "Max": 1.39,
-        "Percent50": 1.2,
-        "Percent75": 1.39,
-        "Percent95": 1.39,
-        "Percent99": 1.39
+        "Mean": 0.08,
+        "Max": 0.1,
+        "Percent50": 0.09,
+        "Percent75": 0.1,
+        "Percent95": 0.1,
+        "Percent99": 0.1
       }
     },
     {
@@ -1822,37 +1084,21 @@ const viewModel = {
       "MetricType": "Gauge",
       "History": [
         {
-          "Value": 64.84,
-          "Timestamp": "00:00:30"
-        },
-        {
-          "Value": 59.2,
-          "Timestamp": "00:00:25"
-        },
-        {
-          "Value": 42.26,
-          "Timestamp": "00:00:20"
-        },
-        {
-          "Value": 35.49,
-          "Timestamp": "00:00:15"
-        },
-        {
-          "Value": 25.37,
+          "Value": 11.8,
           "Timestamp": "00:00:10"
         },
         {
-          "Value": 17.69,
+          "Value": 9.14,
           "Timestamp": "00:00:05"
         }
       ],
       "Percentiles": {
-        "Mean": 55.81,
-        "Max": 80.87,
-        "Percent50": 58.27,
-        "Percent75": 64.87,
-        "Percent95": 76.31,
-        "Percent99": 80.87
+        "Mean": 13.15,
+        "Max": 15.74,
+        "Percent50": 13.12,
+        "Percent75": 13.68,
+        "Percent95": 15.74,
+        "Percent99": 15.74
       }
     },
     {
@@ -1861,37 +1107,21 @@ const viewModel = {
       "MetricType": "Gauge",
       "History": [
         {
-          "Value": 152.27,
-          "Timestamp": "00:00:30"
-        },
-        {
-          "Value": 146.68,
-          "Timestamp": "00:00:25"
-        },
-        {
-          "Value": 127.73,
-          "Timestamp": "00:00:20"
-        },
-        {
-          "Value": 115.52,
-          "Timestamp": "00:00:15"
-        },
-        {
-          "Value": 111.5,
+          "Value": 82.06,
           "Timestamp": "00:00:10"
         },
         {
-          "Value": 92.25,
+          "Value": 77.41,
           "Timestamp": "00:00:05"
         }
       ],
       "Percentiles": {
-        "Mean": 162.72,
-        "Max": 191.99,
-        "Percent50": 175.19,
-        "Percent75": 185.43,
-        "Percent95": 188.47,
-        "Percent99": 191.99
+        "Mean": 81.87,
+        "Max": 86.23,
+        "Percent50": 81.27,
+        "Percent75": 82.07,
+        "Percent95": 86.23,
+        "Percent99": 86.23
       }
     },
     {
@@ -1899,22 +1129,6 @@ const viewModel = {
       "MeasureUnit": "",
       "MetricType": "Gauge",
       "History": [
-        {
-          "Value": 0,
-          "Timestamp": "00:00:30"
-        },
-        {
-          "Value": 0,
-          "Timestamp": "00:00:25"
-        },
-        {
-          "Value": 0,
-          "Timestamp": "00:00:20"
-        },
-        {
-          "Value": 0,
-          "Timestamp": "00:00:15"
-        },
         {
           "Value": 0,
           "Timestamp": "00:00:10"
@@ -1939,37 +1153,21 @@ const viewModel = {
       "MetricType": "Gauge",
       "History": [
         {
-          "Value": 13,
-          "Timestamp": "00:00:30"
-        },
-        {
-          "Value": 13,
-          "Timestamp": "00:00:25"
-        },
-        {
-          "Value": 18,
-          "Timestamp": "00:00:20"
-        },
-        {
-          "Value": 18,
-          "Timestamp": "00:00:15"
-        },
-        {
-          "Value": 18,
+          "Value": 5,
           "Timestamp": "00:00:10"
         },
         {
-          "Value": 18,
+          "Value": 5,
           "Timestamp": "00:00:05"
         }
       ],
       "Percentiles": {
-        "Mean": 16.72,
-        "Max": 26,
-        "Percent50": 18,
-        "Percent75": 21,
-        "Percent95": 26,
-        "Percent99": 26
+        "Mean": 9.88,
+        "Max": 14,
+        "Percent50": 11,
+        "Percent75": 12,
+        "Percent95": 14,
+        "Percent99": 14
       }
     }
   ],
@@ -1982,9 +1180,9 @@ const viewModel = {
           "LoadSimulationsSettings": [
             {
               "Inject": [
-                100,
+                11,
                 "00:00:01",
-                "00:00:30"
+                "00:00:10"
               ]
             }
           ],

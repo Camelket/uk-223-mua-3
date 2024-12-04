@@ -46,7 +46,10 @@ namespace L_Bank_W_Backend
                 options
                     .UseSqlServer(
                         dbSettings.ConnectionString ?? "",
-                        x => x.MigrationsAssembly("L-Bank.DbAccess")
+                        x =>
+                        {
+                            x.MigrationsAssembly("L-Bank.DbAccess");
+                        }
                     )
                     .UseSeeding(
                         (context, _) =>

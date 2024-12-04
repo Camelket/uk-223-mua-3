@@ -16,7 +16,8 @@ public interface IEFBookingRepository
     Task<Booking?> GetOneWithLedgers(int bookingId);
     Task<IEnumerable<Booking>> GetByLedger(int ledgerId);
     Task<IEnumerable<Booking>> GetbyUser(int userId);
-    SqlServerRetryingExecutionStrategy StartRetryExecution(int maxRetry);
+    IExecutionStrategy StartRetryExecution(int maxRetry, TimeSpan retryDelay);
     IDbContextTransaction StartBookingTransaction();
     Task<Booking> Save(Booking booking);
+    void LockBookingTable();
 }

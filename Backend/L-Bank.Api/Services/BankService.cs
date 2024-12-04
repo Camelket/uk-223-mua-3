@@ -187,12 +187,15 @@ public class BankService(
 
     public async Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request)
     {
-        var strategy = bookingRepository.StartRetryExecution(5);
         try
         {
+            var strategy = bookingRepository.StartRetryExecution(5, TimeSpan.FromSeconds(5));
             var transactionResult = await strategy.ExecuteAsync(async () =>
             {
                 using var transaction = bookingRepository.StartBookingTransaction();
+                bookingRepository.LockBookingTable();
+                ledgerRepository.LockLedgersTable();
+
                 var result = await _Book(request.SourceId, request.TargetId, request.Amount);
 
                 if (result.status != ServiceStatus.Success)
@@ -344,13 +347,14 @@ public class BankService(
 
     public async Task<DtoWrapper<DepositResponse>> MakeDeposit(DepositRequest request, int userId)
     {
-        var strategy = bookingRepository.StartRetryExecution(5);
+        var strategy = bookingRepository.StartRetryExecution(5, TimeSpan.FromSeconds(5));
         try
         {
             var transactionResult = await strategy.ExecuteAsync(async () =>
             {
                 using var transaction = bookingRepository.StartBookingTransaction();
                 var result = await _DepositOrWithdrawl(request, userId);
+                ledgerRepository.LockLedgersTable();
 
                 if (result.status != ServiceStatus.Success)
                 {

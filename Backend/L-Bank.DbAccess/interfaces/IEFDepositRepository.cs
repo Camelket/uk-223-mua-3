@@ -11,4 +11,5 @@ public interface IEFDepositRepository
     Task<IEnumerable<Deposit>> GetDepositsByUser(int userId);
 
     Task<Deposit> Save(Deposit deposit);
+    void LockDepositTable();
 }

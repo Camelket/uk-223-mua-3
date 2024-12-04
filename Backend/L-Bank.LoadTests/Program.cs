@@ -1,7 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 using NBomber.Contracts;
 using NBomber.Contracts.Stats;
 using NBomber.CSharp;
@@ -24,9 +21,6 @@ try
     Console.WriteLine("...\n");
 
     var token = await GetAdminAccessToken(client);
-
-    Console.WriteLine(token);
-
     client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
     Console.WriteLine("Creating Data for Test-Scenario");
@@ -56,7 +50,7 @@ try
     var postTotalMoney = await GetTotalMoneyInSystem(client);
 
     Console.WriteLine(
-        $"Starting Money-Total: {preTotalMoney} :: Ending Money-Total: {postTotalMoney} :: Difference: {Math.Round(preTotalMoney - postTotalMoney, 4)}"
+        $"Starting Money-Total: {preTotalMoney} :: Ending Money-Total: {postTotalMoney} :: Difference: {preTotalMoney - postTotalMoney}"
     );
 }
 catch (Exception ex)
@@ -149,7 +143,8 @@ static BookingRequest RandomBookingRequest(TestScenarioData data)
     {
         SourceId = sourceId,
         TargetId = targetId,
-        Amount = random.NextDecimal(decimal.Zero + 0.001M, 432),
+        Amount = random.Next(1, 500),
+        // Amount = random.NextDecimal(decimal.Zero + 0.001M, 432),
     };
 }
 
@@ -179,9 +174,9 @@ static ScenarioProps CreateScenario(HttpClient client, TestScenarioData data)
         .WithoutWarmUp()
         .WithLoadSimulations(
             Simulation.Inject(
-                rate: 100,
+                rate: 11,
                 interval: TimeSpan.FromSeconds(1),
-                during: TimeSpan.FromSeconds(30)
+                during: TimeSpan.FromSeconds(10)
             )
         );
 }

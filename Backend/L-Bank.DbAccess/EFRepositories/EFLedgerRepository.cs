@@ -37,4 +37,9 @@ public class EFLedgerRepository(AppDbContext context) : IEFLedgerRepository
         await context.SaveChangesAsync();
         return ledger;
     }
+
+    public void LockLedgersTable()
+    {
+        context.Database.ExecuteSql($"SELECT TOP 1 Id FROM Ledgers WITH (TABLOCKX, HOLDLOCK)");
+    }
 }
