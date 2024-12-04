@@ -159,6 +159,7 @@ namespace L_Bank_W_Backend
 
             // Configure the HTTP request pipeline.
             // app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             // For index.html
             app.UseAuthentication();
