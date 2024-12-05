@@ -188,33 +188,46 @@ public class BankService(
 
     public async Task<DtoWrapper<BookingResponse>> NewBookingWithProcedure(BookingRequest request)
     {
-        var result = await bookingRepository.BookPrc(
-            request.Amount,
-            request.SourceId,
-            request.TargetId
-        );
-        if (result)
+        try
         {
-            return DtoWrapper<BookingResponse>.WrapDto(
-                new BookingResponse()
+            var result = await transactionProcessing.RegisterTransaction(
+                async () =>
                 {
-                    Id = 1,
-                    SourceId = request.SourceId,
-                    TargetId = request.TargetId,
-                    TargetName = "",
-                    TransferedAmount = request.Amount,
+                    var res = await bookingRepository.BookPrc(
+                        request.Amount,
+                        request.SourceId,
+                        request.TargetId
+                    );
+                    return res;
                 },
-                ""
+                [request.SourceId, request.TargetId]
             );
+            if (result)
+            {
+                return DtoWrapper<BookingResponse>.WrapDto(
+                    new BookingResponse()
+                    {
+                        Id = 1,
+                        SourceId = request.SourceId,
+                        TargetId = request.TargetId,
+                        TargetName = "",
+                        TransferedAmount = request.Amount,
+                    },
+                    ""
+                );
+            }
+            return DtoWrapper<BookingResponse>.WrapDto(ServiceStatus.BadRequest, "");
         }
-        return DtoWrapper<BookingResponse>.WrapDto(ServiceStatus.BadRequest, "");
+        catch (Exception ex)
+        {
+            return DtoWrapper<BookingResponse>.WrapDto(ServiceStatus.BadRequest, ex.Message);
+        }
     }
 
     public async Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request)
     {
         try
         {
-            // logger.LogWarning("incomingincoming");
             var transactionResult = await transactionProcessing.RegisterTransaction(
                 async () =>
                 {
@@ -225,37 +238,17 @@ public class BankService(
                 },
                 [request.SourceId, request.TargetId]
             );
-            // var strategy = bookingRepository.StartRetryExecution(5, TimeSpan.FromSeconds(2));
-            // var transactionResult = await strategy.ExecuteAsync(async () =>
-            // {
-            //     using var transaction = bookingRepository.StartBookingTransaction();
-            //     // bookingRepository.LockBookingTable();
-            //     // ledgerRepository.LockLedgersTable();
-
-            //     var result = await _Book(request.SourceId, request.TargetId, request.Amount);
-
-            //     if (result.status != ServiceStatus.Success)
-            //     {
-            //         await transaction.RollbackAsync();
-            //         return result;
-            //     }
-
-            //     await transaction.CommitAsync();
-            //     return result;
-            // });
 
             if (
                 transactionResult.status == ServiceStatus.Success
                 && transactionResult.booking != null
             )
             {
-                // logger.LogWarning("outgoingoutgoing - success");
                 return DtoWrapper<BookingResponse>.WrapDto(
                     DtoMapper.ToBookingResponse(transactionResult.booking),
                     null
                 );
             }
-            // logger.LogWarning("outgoingoutgoing - unable");
             return DtoWrapper<BookingResponse>.WrapDto(
                 transactionResult.status,
                 transactionResult.message ?? "Transaction was unable to complete"
@@ -263,7 +256,6 @@ public class BankService(
         }
         catch (Exception)
         {
-            // logger.LogWarning("outgoingoutgoing - error");
             return DtoWrapper<BookingResponse>.WrapDto(
                 ServiceStatus.TransactionFailed,
                 "Transaction was unable to complete - Booking not recorded"
@@ -275,8 +267,6 @@ public class BankService(
     {
         var sourceLedger = await ledgerRepository.GetOne(sourceId);
         var targetLedger = await ledgerRepository.GetOne(targetId);
-
-        // Thread.Sleep(5000);
 
         if (sourceLedger == null || targetLedger == null)
         {

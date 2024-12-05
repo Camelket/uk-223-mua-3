@@ -20,9 +20,10 @@ public static class SeedData
             }
             context.SaveChanges();
             context.Database.ExecuteSql($"SET IDENTITY_INSERT dbo.Users OFF");
-
-            context.Database.ExecuteSql(
-                $@"CREATE PROCEDURE TransferAmount
+        }
+        
+        context.Database.ExecuteSql(
+            $@"CREATE PROCEDURE TransferAmount
                                 @sourceId INT,
                                 @targetId INT,
                                 @amount DECIMAL(18, 2)
@@ -39,7 +40,7 @@ public static class SeedData
                                         RETURN;
                                     END
 
-                                    UPDATE Ledgers WITH (ROWLOCK, UPDLOCK)
+                                    UPDATE Ledgers
                                     SET Balance = CASE 
                                                     WHEN Id = @sourceId THEN Balance - @amount
                                                     WHEN Id = @targetId THEN Balance + @amount
@@ -79,8 +80,7 @@ public static class SeedData
                                     RAISERROR(@ErrorMessage, 16, 1);
                                 END CATCH
                             END"
-            );
-        }
+        );
 
         if (ledgerCount < 1)
         {
