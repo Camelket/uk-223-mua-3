@@ -49,6 +49,11 @@ namespace L_Bank_W_Backend
                         x =>
                         {
                             x.MigrationsAssembly("L-Bank.DbAccess");
+                            // x.EnableRetryOnFailure(
+                            //     maxRetryCount: 5,
+                            //     maxRetryDelay: TimeSpan.FromSeconds(2),
+                            //     null
+                            // );
                         }
                     )
                     .UseSeeding(
@@ -87,6 +92,10 @@ namespace L_Bank_W_Backend
                 });
 
             builder.Services.AddAuthorization();
+            builder.Services.AddSingleton<
+                IQueueTransactionProcessing,
+                QueueTransactionProcessingV2
+            >();
 
             builder.Services.AddTransient<IEFLedgerRepository, EFLedgerRepository>();
             builder.Services.AddTransient<IEFUserRepository, EFUserRepository>();

@@ -31,15 +31,16 @@ public class BankService(
     IEFUserRepository userRepository,
     IEFLedgerRepository ledgerRepository,
     IEFDepositRepository depositRepository,
-    ILogger<BankService> logger
+    ILogger<BankService> logger,
+    IQueueTransactionProcessing transactionProcessing
 ) : IBankService
 {
     private readonly ILogger<BankService> logger = logger;
     private readonly IEFBookingRepository bookingRepository = bookingRepository;
     private readonly IEFUserRepository userRepository = userRepository;
     private readonly IEFLedgerRepository ledgerRepository = ledgerRepository;
-
     private readonly IEFDepositRepository depositRepository = depositRepository;
+    private readonly IQueueTransactionProcessing transactionProcessing = transactionProcessing;
 
     public async Task<DtoWrapper<LedgerResponse>> NewLedger(LedgerRequest request, int userId)
     {
@@ -189,35 +190,48 @@ public class BankService(
     {
         try
         {
-            var strategy = bookingRepository.StartRetryExecution(5, TimeSpan.FromSeconds(5));
-            var transactionResult = await strategy.ExecuteAsync(async () =>
-            {
-                using var transaction = bookingRepository.StartBookingTransaction();
-                bookingRepository.LockBookingTable();
-                ledgerRepository.LockLedgersTable();
-
-                var result = await _Book(request.SourceId, request.TargetId, request.Amount);
-
-                if (result.status != ServiceStatus.Success)
+            // logger.LogWarning("incomingincoming");
+            var transactionResult = await transactionProcessing.RegisterTransaction(
+                async () =>
                 {
-                    await transaction.RollbackAsync();
+                    using var transaction = bookingRepository.StartBookingTransaction();
+                    var result = await _Book(request.SourceId, request.TargetId, request.Amount);
+                    transaction.Commit();
                     return result;
-                }
+                },
+                [request.SourceId, request.TargetId]
+            );
+            // var strategy = bookingRepository.StartRetryExecution(5, TimeSpan.FromSeconds(2));
+            // var transactionResult = await strategy.ExecuteAsync(async () =>
+            // {
+            //     using var transaction = bookingRepository.StartBookingTransaction();
+            //     // bookingRepository.LockBookingTable();
+            //     // ledgerRepository.LockLedgersTable();
 
-                await transaction.CommitAsync();
-                return result;
-            });
+            //     var result = await _Book(request.SourceId, request.TargetId, request.Amount);
+
+            //     if (result.status != ServiceStatus.Success)
+            //     {
+            //         await transaction.RollbackAsync();
+            //         return result;
+            //     }
+
+            //     await transaction.CommitAsync();
+            //     return result;
+            // });
 
             if (
                 transactionResult.status == ServiceStatus.Success
                 && transactionResult.booking != null
             )
             {
+                // logger.LogWarning("outgoingoutgoing - success");
                 return DtoWrapper<BookingResponse>.WrapDto(
                     DtoMapper.ToBookingResponse(transactionResult.booking),
                     null
                 );
             }
+            // logger.LogWarning("outgoingoutgoing - unable");
             return DtoWrapper<BookingResponse>.WrapDto(
                 transactionResult.status,
                 transactionResult.message ?? "Transaction was unable to complete"
@@ -225,6 +239,7 @@ public class BankService(
         }
         catch (Exception)
         {
+            // logger.LogWarning("outgoingoutgoing - error");
             return DtoWrapper<BookingResponse>.WrapDto(
                 ServiceStatus.TransactionFailed,
                 "Transaction was unable to complete - Booking not recorded"

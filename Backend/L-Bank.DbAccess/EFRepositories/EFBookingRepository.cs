@@ -63,12 +63,13 @@ public class EFBookingRepository(AppDbContext context, ILogger<EFBookingReposito
 
     public IExecutionStrategy StartRetryExecution(int maxRetry, TimeSpan retryDelay)
     {
-        return new SqlServerRetryingExecutionStrategy(context, maxRetry, retryDelay, null);
+        return context.Database.CreateExecutionStrategy();
+        // return new SqlServerRetryingExecutionStrategy(context, maxRetry, retryDelay, null);
     }
 
     public IDbContextTransaction StartBookingTransaction()
     {
-        return context.Database.BeginTransaction(IsolationLevel.Serializable);
+        return context.Database.BeginTransaction();
     }
 
     public async Task<Booking> Save(Booking booking)

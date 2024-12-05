@@ -14,6 +14,22 @@ try
     client.BaseAddress = new("https://localhost:7015");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 
+    Console.WriteLine("Getting Inputs\n");
+    Console.WriteLine("!! IMPORTANT !!");
+    Console.WriteLine("Set Log-Level in API (appsettings) to Error\n");
+
+    Console.Write("Generate Test-Data: (y/n) ");
+    string? answer = Console.ReadLine();
+    bool generate = answer == "y" || answer == "Y";
+
+    Console.Write("Enter target RPS: ");
+    string? rpsString = Console.ReadLine();
+    int rps = Int32.Parse(rpsString);
+
+    Console.Write("Enter target Timespan in Seconds: ");
+    string? timespanString = Console.ReadLine();
+    int time = Int32.Parse(timespanString);
+
     Console.WriteLine("Preparing for Load-Tests");
     Console.WriteLine("...\n");
 
@@ -23,10 +39,21 @@ try
     var token = await GetAdminAccessToken(client);
     client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
-    Console.WriteLine("Creating Data for Test-Scenario");
-    Console.WriteLine("...\n");
+    TestScenarioData data;
+    if (generate)
+    {
+        Console.WriteLine("Creating Data for Test-Scenario");
+        Console.WriteLine("...\n");
 
-    var data = await PrepareTestData(client);
+        data = await PrepareTestData(client);
+    }
+    else
+    {
+        Console.WriteLine("Getting Data for Test-Scenario");
+        Console.WriteLine("...\n");
+
+        data = await GetTestData(client);
+    }
 
     Console.WriteLine("Getting Total Money in System before Load-Tests");
     Console.WriteLine("...\n");
@@ -36,7 +63,7 @@ try
     Console.WriteLine("Starting NBomber Load-Tests");
     Console.WriteLine("...\n");
 
-    var scenario = CreateScenario(client, data);
+    var scenario = CreateScenario(client, data, rps, time);
     NBomberRunner
         .RegisterScenarios(scenario)
         .WithReportFileName("reports")
@@ -94,12 +121,28 @@ static async Task<string> GetAdminAccessToken(HttpClient client)
     return login?.Token ?? "";
 }
 
-static async Task<TestScenarioData> PrepareTestData(HttpClient client)
+static async Task<TestScenarioData> GetTestData(HttpClient client)
 {
-    // Create Test-Ledgers
     List<LedgerResponse> ledgers = [];
 
-    for (int i = 0; i < Randomizer.GetRandom().Next(5, 40); i++)
+    var existingResponse = await client.GetAsync("/api/ledgers");
+    var requestedledgers = JsonConvert.DeserializeObject<LedgerResponse[]>(
+        await existingResponse.Content.ReadAsStringAsync()
+    );
+
+    ledgers.AddRange(requestedledgers);
+
+    return new TestScenarioData() { ledgers = ledgers };
+}
+
+static async Task<TestScenarioData> PrepareTestData(HttpClient client)
+{
+    List<LedgerResponse> ledgers = [];
+
+    Console.WriteLine("Creating random Amount of Ledgers (100 - 1000)");
+    Console.WriteLine("...\n");
+
+    for (int i = 0; i < Randomizer.GetRandom().Next(100, 1000); i++)
     {
         var payload = new LedgerRequest() { Name = RandomString(10) };
         var response = await client.PostAsync("/api/ledgers", ToHttpContent(payload));
@@ -113,7 +156,9 @@ static async Task<TestScenarioData> PrepareTestData(HttpClient client)
         }
     }
 
-    // Deposit random amount of money
+    Console.WriteLine("Depositing random Amount of Money to each Ledger (1000 - 100000)");
+    Console.WriteLine("...\n");
+
     foreach (var ledger in ledgers)
     {
         var payload = new DepositRequest()
@@ -131,12 +176,12 @@ static BookingRequest RandomBookingRequest(TestScenarioData data)
 {
     Random random = Randomizer.GetRandom();
 
-    int sourceId = data.ledgers[random.Next(0, data.ledgers.Count)].Id;
+    int sourceId = data.ledgers[random.Next(0, data.ledgers.Count - 1)].Id;
     int targetId = 0;
 
     do
     {
-        targetId = data.ledgers[random.Next(0, data.ledgers.Count)].Id;
+        targetId = data.ledgers[random.Next(0, data.ledgers.Count - 1)].Id;
     } while (sourceId == targetId);
 
     return new BookingRequest()
@@ -144,7 +189,6 @@ static BookingRequest RandomBookingRequest(TestScenarioData data)
         SourceId = sourceId,
         TargetId = targetId,
         Amount = random.Next(1, 500),
-        // Amount = random.NextDecimal(decimal.Zero + 0.001M, 432),
     };
 }
 
@@ -156,7 +200,7 @@ static async Task<decimal> GetTotalMoneyInSystem(HttpClient client)
     return JsonConvert.DeserializeObject<decimal>(await response.Content.ReadAsStringAsync());
 }
 
-static ScenarioProps CreateScenario(HttpClient client, TestScenarioData data)
+static ScenarioProps CreateScenario(HttpClient client, TestScenarioData data, int rps, int time)
 {
     return Scenario
         .Create(
@@ -174,11 +218,12 @@ static ScenarioProps CreateScenario(HttpClient client, TestScenarioData data)
         .WithoutWarmUp()
         .WithLoadSimulations(
             Simulation.Inject(
-                rate: 11,
+                rate: rps,
                 interval: TimeSpan.FromSeconds(1),
-                during: TimeSpan.FromSeconds(10)
+                during: TimeSpan.FromSeconds(time)
             )
         );
+    ;
 }
 
 class Randomizer
@@ -191,27 +236,6 @@ class Randomizer
     {
         random ??= new Random();
         return random;
-    }
-}
-
-static class RandomExtensions
-{
-    public static decimal NextDecimal(this Random rnd, decimal from, decimal to)
-    {
-        byte fromScale = new System.Data.SqlTypes.SqlDecimal(from).Scale;
-        byte toScale = new System.Data.SqlTypes.SqlDecimal(to).Scale;
-
-        byte scale = (byte)(fromScale + toScale);
-        if (scale > 28)
-            scale = 28;
-
-        decimal r = new decimal(rnd.Next(), rnd.Next(), rnd.Next(), false, scale);
-        if (Math.Sign(from) == Math.Sign(to) || from == 0 || to == 0)
-            return decimal.Remainder(r, to - from) + from;
-
-        bool getFromNegativeRange =
-            (double)from + rnd.NextDouble() * ((double)to - (double)from) < 0;
-        return getFromNegativeRange ? decimal.Remainder(r, -from) + from : decimal.Remainder(r, to);
     }
 }
 
