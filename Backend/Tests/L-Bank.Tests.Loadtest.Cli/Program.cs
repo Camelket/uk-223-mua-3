@@ -4,6 +4,10 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+using NBomber.CSharp;
+using NBomber.Http.CSharp;
+using NBomber.Contracts.Stats; // Importiert die ReportFormat Definition
+
 namespace LBank.Tests.Loadtest.Cli
 {
     class Program
@@ -17,8 +21,9 @@ namespace LBank.Tests.Loadtest.Cli
             {
                 // Einloggen und JWT-Token erhalten
                 string jwt = await Login("admin", "adminpass");
+                Console.WriteLine("Generated JWT Token: " + jwt);
 
-                // Hole Ledgers mithilfe des JWT-Tokens
+                // Hole Ledgers mithilfe des JWT-Tokens (normaler Abruf zum Testen)
                 var ledgers = await GetAllLedgers(jwt);
 
                 // Gebe alle Ledgers in der Konsole aus
@@ -27,7 +32,40 @@ namespace LBank.Tests.Loadtest.Cli
                     Console.WriteLine($"Ledger Name: {ledger.Name}, Balance: {ledger.Balance}");
                 }
 
-                Console.WriteLine("Press any key to exit");
+                // NBomber-Load-Test für den gleichen Endpoint
+                using var httpClient = new HttpClient();
+
+                var scenario = Scenario.Create("http_scenario", async context =>
+                {
+                    // NBomber-Anfrage erstellen und JWT-Token in den Header einfügen
+                    var request = Http.CreateRequest("GET", "http://localhost:5290/api/ledgers/all")
+                        .WithHeader("Authorization", $"Bearer {jwt}")
+                        .WithHeader("Accept", "application/json");
+
+                    // Logging hinzufügen, um zu überprüfen, ob der JWT-Token gesetzt ist
+                    Console.WriteLine("NBomber Request: Authorization Header Set");
+
+                    var response = await Http.Send(httpClient, request);
+                    Console.WriteLine($"Response Status Code: {response.StatusCode}");
+
+                    return response;
+                })
+                .WithoutWarmUp()
+                .WithLoadSimulations(
+                    Simulation.Inject(rate: 100,
+                                      interval: TimeSpan.FromSeconds(1),
+                                      during: TimeSpan.FromSeconds(30))
+                );
+
+                // NBomber-Szenario ausführen und Report generieren
+                NBomberRunner
+                    .RegisterScenarios(scenario)
+                    .WithReportFileName("fetch_users_report")
+                    .WithReportFolder("fetch_users_reports")
+                    .WithReportFormats(ReportFormat.Html) // ReportFormat hinzugefügt
+                    .Run();
+
+                Console.WriteLine("Press any key to exit after load test");
                 Console.ReadKey();
             }
             catch (Exception ex)
@@ -64,8 +102,8 @@ namespace LBank.Tests.Loadtest.Cli
         {
             var url = "http://localhost:5290/api/ledgers/all"; // Verwende Port 5290 für HTTP
 
-            client.DefaultRequestHeaders.Add("Authorization", "Bearer "+jwt);
-           
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + jwt);
 
             HttpResponseMessage response = await client.GetAsync(url);
 
