@@ -62,5 +62,5 @@ Transaktionen mit Table-Locks oder Isolationslevel "Serializable" sind einfach u
 3. Die Queue stellt geeignete Batches an Transaktionen zusammen, welche gemeinsam und ohne sich gegenseitig in die Quere zu kommen ausgeführt werden können.
 4. Die Queue nimmt die gruppierten Transaktionsanfragen (Batches) und führt sie seriell aus. 
 
-
+![Sequenzdiagramm](/SeqUek223.svg)
 
