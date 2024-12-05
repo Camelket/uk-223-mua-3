@@ -18,6 +18,7 @@ public class BankServiceTests
     private readonly Mock<IEFDepositRepository> _depositMock;
     private readonly Mock<IEFUserRepository> _userMock;
     private readonly Mock<ILogger<BankService>> _loggerMock;
+    private readonly Mock<IQueueTransactionProcessing> _queueMock;
     private BankService bankService;
 
     public BankServiceTests()
@@ -27,13 +28,15 @@ public class BankServiceTests
         _depositMock = new Mock<IEFDepositRepository>();
         _userMock = new Mock<IEFUserRepository>();
         _loggerMock = new Mock<ILogger<BankService>>();
+        _queueMock = new Mock<IQueueTransactionProcessing>();
 
         bankService = new BankService(
             _bookingMock.Object,
             _userMock.Object,
             _ledgerMock.Object,
             _depositMock.Object,
-            _loggerMock.Object
+            _loggerMock.Object,
+            _queueMock.Object
         );
     }
 
