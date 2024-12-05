@@ -5,6 +5,10 @@ using NBomber.CSharp;
 using NBomber.Http.CSharp;
 using Newtonsoft.Json;
 
+const string ENDPOINT_QUEUE = "/api/bookings";
+const string ENDPOINT_PROCEDURE = "api/bookings/procedure";
+const string ENDPOINT_BOTH = "api/bookings/procedure/queue";
+
 Console.WriteLine("Load-Testing L-Bank.Api...");
 Console.WriteLine();
 
@@ -63,22 +67,29 @@ try
     Console.WriteLine("Starting NBomber Load-Tests");
     Console.WriteLine("...\n");
 
-    var scenario = CreateScenario(client, data, rps, time);
-    NBomberRunner
-        .RegisterScenarios(scenario)
-        .WithReportFileName("reports")
-        .WithReportFolder("reports")
-        .WithReportFormats(ReportFormat.Html)
-        .Run();
+    foreach (
+        string endpoint in new List<string>()
+        // { ENDPOINT_QUEUE, ENDPOINT_PROCEDURE, ENDPOINT_BOTH }
+        {
+            ENDPOINT_PROCEDURE,
+        }
+    )
+    {
+        NBomberRunner
+            .RegisterScenarios(_CreateScenario(client, data, rps, time, endpoint))
+            .WithReportFileName($"reports-{endpoint.Split("/").Last()}")
+            .WithReportFolder("reports")
+            .WithReportFormats(ReportFormat.Html)
+            .Run();
+        Console.WriteLine("Getting Total Money in System after Load-Tests");
+        Console.WriteLine("...\n");
 
-    Console.WriteLine("Getting Total Money in System after Load-Tests");
-    Console.WriteLine("...\n");
+        var postTotalMoney = await GetTotalMoneyInSystem(client);
 
-    var postTotalMoney = await GetTotalMoneyInSystem(client);
-
-    Console.WriteLine(
-        $"Starting Money-Total: {preTotalMoney} :: Ending Money-Total: {postTotalMoney} :: Difference: {preTotalMoney - postTotalMoney}"
-    );
+        Console.WriteLine(
+            $"Starting Money-Total: {preTotalMoney} :: Ending Money-Total: {postTotalMoney} :: Difference: {preTotalMoney - postTotalMoney}"
+        );
+    }
 }
 catch (Exception ex)
 {
@@ -200,16 +211,21 @@ static async Task<decimal> GetTotalMoneyInSystem(HttpClient client)
     return JsonConvert.DeserializeObject<decimal>(await response.Content.ReadAsStringAsync());
 }
 
-static ScenarioProps CreateScenario(HttpClient client, TestScenarioData data, int rps, int time)
+static ScenarioProps _CreateScenario(
+    HttpClient client,
+    TestScenarioData data,
+    int rps,
+    int time,
+    string endpoint
+)
 {
     return Scenario
         .Create(
-            "request_transaction",
+            $"request_transaction-{endpoint}",
             async _ =>
             {
                 var payload = RandomBookingRequest(data);
-                var request = Http.CreateRequest("POST", "/api/bookings")
-                    .WithBody(ToHttpContent(payload));
+                var request = Http.CreateRequest("POST", endpoint).WithBody(ToHttpContent(payload));
 
                 var response = await Http.Send(client, request);
                 return response;

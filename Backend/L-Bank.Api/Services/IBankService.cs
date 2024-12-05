@@ -18,8 +18,6 @@ public interface IBankService
     Task<DtoWrapper<List<BookingResponse>>> GetBookingsForLedger(int ledgerId);
     Task<DtoWrapper<List<BookingResponse>>> GetBookingsForUser(int userId);
 
-    Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request);
-
     Task<DtoWrapper<LedgerResponse>> NewLedger(LedgerRequest request, int userId);
 
     Task<bool> LedgerBelongsToUser(int ledgerId, int userId);
@@ -30,4 +28,8 @@ public interface IBankService
     Task<DtoWrapper<List<DepositResponse>>> GetDepositsByUser(int userId);
     Task<DtoWrapper<DepositResponse>> MakeDeposit(DepositRequest request, int userId);
     Task<DtoWrapper<BookingResponse>> NewBookingWithProcedure(BookingRequest request);
+
+    Task<DtoWrapper<BookingResponse>> NewBookingWithProcedureAndQueue(BookingRequest request);
+
+    Task<DtoWrapper<BookingResponse>> NewBookingWithQueue(BookingRequest request);
 }

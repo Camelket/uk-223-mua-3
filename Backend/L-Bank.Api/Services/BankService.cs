@@ -190,10 +190,38 @@ public class BankService(
     {
         try
         {
+            var res = await bookingRepository.BookProcedureWithLock(
+                request.Amount,
+                request.SourceId,
+                request.TargetId
+            );
+            return DtoWrapper<BookingResponse>.WrapDto(
+                new BookingResponse()
+                {
+                    SourceId = request.SourceId,
+                    TargetId = request.TargetId,
+                    TargetName = "",
+                    TransferedAmount = request.Amount,
+                },
+                "Successful Booking"
+            );
+        }
+        catch (Exception ex)
+        {
+            return DtoWrapper<BookingResponse>.WrapDto(ServiceStatus.BadRequest, ex.Message);
+        }
+    }
+
+    public async Task<DtoWrapper<BookingResponse>> NewBookingWithProcedureAndQueue(
+        BookingRequest request
+    )
+    {
+        try
+        {
             var result = await transactionProcessing.RegisterTransaction(
                 async () =>
                 {
-                    var res = await bookingRepository.BookPrc(
+                    var res = await bookingRepository.BookProcedureWithoutLock(
                         request.Amount,
                         request.SourceId,
                         request.TargetId
@@ -207,13 +235,12 @@ public class BankService(
                 return DtoWrapper<BookingResponse>.WrapDto(
                     new BookingResponse()
                     {
-                        Id = 1,
                         SourceId = request.SourceId,
                         TargetId = request.TargetId,
                         TargetName = "",
                         TransferedAmount = request.Amount,
                     },
-                    ""
+                    "Successful Booking"
                 );
             }
             return DtoWrapper<BookingResponse>.WrapDto(ServiceStatus.BadRequest, "");
@@ -224,7 +251,7 @@ public class BankService(
         }
     }
 
-    public async Task<DtoWrapper<BookingResponse>> NewBooking(BookingRequest request)
+    public async Task<DtoWrapper<BookingResponse>> NewBookingWithQueue(BookingRequest request)
     {
         try
         {

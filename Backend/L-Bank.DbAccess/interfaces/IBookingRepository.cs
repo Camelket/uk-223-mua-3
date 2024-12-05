@@ -21,5 +21,7 @@ public interface IEFBookingRepository
     Task<Booking> Save(Booking booking);
     void LockBookingTable();
 
-    Task<bool> BookPrc(decimal amount, int from, int to);
+    Task<bool> BookProcedureWithoutLock(decimal amount, int from, int to);
+
+    Task<bool> BookProcedureWithLock(decimal amount, int from, int to);
 }

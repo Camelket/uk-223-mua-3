@@ -81,10 +81,9 @@ namespace L_Bank.Api.Controllers
             );
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Admin, User")]
-        public async Task<ActionResult<BookingResponse>> NewBooking(
-            [FromBody] BookingRequest request
+        private async Task<ActionResult<BookingResponse>> _NewBooking(
+            BookingRequest request,
+            Func<BookingRequest, Task<DtoWrapper<BookingResponse>>> func
         )
         {
             var requestorId = int.Parse(
@@ -102,8 +101,7 @@ namespace L_Bank.Api.Controllers
                     return Forbid();
                 }
             }
-
-            var result = await bankService.NewBookingWithProcedure(request);
+            var result = await func(request);
             if (result.IsSuccess)
             {
                 return Ok(result.Data);
@@ -114,6 +112,33 @@ namespace L_Bank.Api.Controllers
                 statusCode: ServiceStatusUtil.Map(result.Status),
                 title: "Error"
             );
+        }
+
+        [HttpPost("procedure")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<BookingResponse>> NewBookingWithProcedure(
+            [FromBody] BookingRequest request
+        )
+        {
+            return await _NewBooking(request, bankService.NewBookingWithProcedure);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<BookingResponse>> NewBookingWithQueue(
+            [FromBody] BookingRequest request
+        )
+        {
+            return await _NewBooking(request, bankService.NewBookingWithQueue);
+        }
+
+        [HttpPost("procedure/queue")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<BookingResponse>> NewBookingWithProcedureAndQueue(
+            [FromBody] BookingRequest request
+        )
+        {
+            return await _NewBooking(request, bankService.NewBookingWithProcedureAndQueue);
         }
     }
 }

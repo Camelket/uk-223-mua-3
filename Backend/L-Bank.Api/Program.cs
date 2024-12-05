@@ -50,11 +50,11 @@ namespace L_Bank_W_Backend
                         {
                             x.MigrationsAssembly("L-Bank.DbAccess");
                             x.CommandTimeout(10);
-                            x.EnableRetryOnFailure(
-                                maxRetryCount: 5,
-                                maxRetryDelay: TimeSpan.FromSeconds(10),
-                                null
-                            );
+                            // x.EnableRetryOnFailure(
+                            //     maxRetryCount: 5,
+                            //     maxRetryDelay: TimeSpan.FromSeconds(10),
+                            //     null
+                            // );
                         }
                     )
                     .UseSeeding(

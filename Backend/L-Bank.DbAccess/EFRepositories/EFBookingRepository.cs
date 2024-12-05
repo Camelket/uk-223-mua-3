@@ -1,6 +1,8 @@
 using System.Data;
+using System.Data.SqlClient;
 using L_Bank_W_Backend.Core.Models;
 using L_Bank_W_Backend.Interfaces;
+using L_Bank.Api;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -63,8 +65,8 @@ public class EFBookingRepository(AppDbContext context, ILogger<EFBookingReposito
 
     public IExecutionStrategy StartRetryExecution(int maxRetry, TimeSpan retryDelay)
     {
-        return context.Database.CreateExecutionStrategy();
-        // return new SqlServerRetryingExecutionStrategy(context, maxRetry, retryDelay, null);
+        // return context.Database.CreateExecutionStrategy();
+        return new SqlServerRetryingExecutionStrategy(context, maxRetry, retryDelay, null);
     }
 
     public IDbContextTransaction StartBookingTransaction()
@@ -87,24 +89,35 @@ public class EFBookingRepository(AppDbContext context, ILogger<EFBookingReposito
         return booking;
     }
 
-    public async Task<bool> BookPrc(decimal amount, int from, int to)
+    public async Task<bool> BookProcedureWithoutLock(decimal amount, int from, int to)
     {
-        var strategy = new SqlServerRetryingExecutionStrategy(context);
-        var result = await strategy.ExecuteAsync(async () =>
+        try
         {
-            try
-            {
-                await context.Database.ExecuteSqlAsync(
-                    $@"EXEC TransferAmount @sourceId = {from}, @targetId = {to}, @amount = {amount};"
-                );
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return false;
-            }
+            var result = await context.Database.ExecuteSqlAsync(
+                $@"EXEC {Procedures.BookingWithoutLockProcedureName} @sourceId = {from}, @targetId = {to}, @amount = {amount};"
+            );
             return true;
-        });
-        return result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return false;
+        }
+    }
+
+    public async Task<bool> BookProcedureWithLock(decimal amount, int from, int to)
+    {
+        try
+        {
+            var result = await context.Database.ExecuteSqlAsync(
+                $@"EXEC {Procedures.BookingWithLock} @sourceId = {from}, @targetId = {to}, @amount = {amount};"
+            );
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return false;
+        }
     }
 }
