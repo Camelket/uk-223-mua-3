@@ -6,8 +6,8 @@ using NBomber.Http.CSharp;
 using Newtonsoft.Json;
 
 const string ENDPOINT_QUEUE = "/api/bookings";
-const string ENDPOINT_PROCEDURE = "api/bookings/procedure";
-const string ENDPOINT_BOTH = "api/bookings/procedure/queue";
+const string ENDPOINT_PROCEDURE = "/api/bookings/procedure";
+const string ENDPOINT_BOTH = "/api/bookings/procedure/queue";
 
 Console.WriteLine("Load-Testing L-Bank.Api...");
 Console.WriteLine();
@@ -68,11 +68,7 @@ try
     Console.WriteLine("...\n");
 
     foreach (
-        string endpoint in new List<string>()
-        // { ENDPOINT_QUEUE, ENDPOINT_PROCEDURE, ENDPOINT_BOTH }
-        {
-            ENDPOINT_PROCEDURE,
-        }
+        string endpoint in new List<string>() { ENDPOINT_QUEUE, ENDPOINT_PROCEDURE, ENDPOINT_BOTH }
     )
     {
         NBomberRunner
