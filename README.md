@@ -41,9 +41,26 @@ Die Methode `_DepositOrWithdrawl` implementiert die konkrete Logik - die Transak
 
 Im Frontend können Deposits und Withdrawls über ein einfaches Formular für eigene Konten (Feld mit Auto-Complete) angefragt werden - dies erfolgt nach gleichem Aufbau wie bei den Bookings. Bei erfolgreicher Operation (Deposit oder Booking) werden die Transaktions- und Deposit-History neu geladen und aktualisiert. 
 
-Ein grösserer Teil des ÜKs wurde damit verbracht, 
+Die weiteren Backend-Features werden unter Transaktionssicherheit ausführlicher erläutert.
 
 ## Transaktionssicherheit
+
+In einer einfachen Betrachtungsweise bedeutet Transaktionssicherheit, dass keine ungewünschten Nebeneffekte bei der Ausführung einer Buchung auftreten. Ungewünschte Nebeneffekte haben zur Folge, dass der State der Applikation nicht mehr stabil ist. Dies äussert sich, wenn vor der Transaktion weniger oder mehr Geld im ganzen System vorhanden ist oder wenn Überweisungen getätigt wurden, ohne in der Bookings-Tabelle festgehalten zu sein. Diese Nebeneffekte entstehen, wenn sich mehrere Überweisungen teilweise überschreiben (Lost-Updates) oder nicht komplett abgeschlossen werden (z.B. Geld wird auf Konto A überwiesen, Ausführung scheitert beim Abzug des Gelds von Konto B, da dieses nicht genug enthätl). Weitere Ursachen sind Verbindungs- oder Netzwerkprobleme mit der Datenbank. 
+
+All diese Problematiken sind einfach aufgefangen indem alle notwendigen Operationen in einer gemeinsamen Transaktion mit Isolationslevel "Serializable" ausgeführt werden. So werden alle oder keine Änderungen ausgeführt. Unsere BusinessLogik zur Ausführung von Bookings in der Methode "_Book" überprüft ob alle notwendigen Bedingungen für die Transaktion erfüllt sind. Die Methode wurde erfolgreich mit UnitTests getestet. In der übergeordneten Methode wird die Transaktion gestartet und bei Problemen erfolgt ein Rollback. Mittels von Lasttests kann über etliche Buchungen in kleinem Zeitraum einerseits die Fehler/Erfolgs-Quote getestet werden. Andererseits kann überprüft werden, dass vor und nach den erfolgten Buchungen gleich viel Geld im System ist. Dies ist ein guter Indikator, dass die Transaktionssicherheit eingehalten wurde. 
+
+Bei den Lasttests hat es sich gezeigt, dass die erste Implementation der Buchungen nicht zufriedenstellend ist. Sie war zu bei vielen Requests pro Sekunde bedeutend zu langsam und die Fehlerquote war hoch. So war zwar die Sicherheit gewährleistet (es gab keine Nebeneffekte), jedoch war das System nicht resilient genug. Unter anderem entstanden viele Konflikte (Transaktionen konnten nicht ausgeführt werden, da bereits andere Buchungen im Gang waren) und die Retries haben eine grosse Langsamkeit in das System eingeführt. Aus diesem Grund wurde ein grösserer Teil des ÜKs damit verbracht geeignetere Möglichkeiten zu finden und umzusetzen. 
+
+### Stored Procedures
+Stored-Procedures sind SQL-Statements, welche direkt auf der Datenbank hinterlegt sind. Dadurch sind sie bedeutend performanter und das ganze System dadurch bei hoher Last resilienter. Die Stored-Procedures werden über `database update` mit dem Seeder auf der Datenbank gespeichert. Die konkrete Logik sowie Überprüfung inklusive Transaktion und Retry-Strategy bei Konflikten bleibt gleich. 
+
+### QueueTransactionProcessing
+Transaktionen mit Table-Locks oder Isolationslevel "Serializable" sind einfach umzusetzen habe jedoch das Problem, dass mehr Konflikte entstehen. Die Queue probiert einen ausgeklügerten Ansatz zu verfolgen und Konflikte / Retries zu verhindern. Dies geschieht über Analyse der betroffenen Entitäten (Konten). 
+
+1. Die Queue nimmt Transaktionsanfragen entgegen.
+2. Die Queue analysiert die Transaktionsanfragen und deren betroffenen Entitäten.
+3. Die Queue stellt geeignete Batches an Transaktionen zusammen, welche gemeinsam und ohne sich gegenseitig in die Quere zu kommen ausgeführt werden können.
+4. Die Queue nimmt die gruppierten Transaktionsanfragen (Batches) und führt sie seriell aus. 
 
 
 
