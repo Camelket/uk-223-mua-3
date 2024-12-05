@@ -86,4 +86,25 @@ public class EFBookingRepository(AppDbContext context, ILogger<EFBookingReposito
         await context.SaveChangesAsync();
         return booking;
     }
+
+    public async Task<bool> BookPrc(decimal amount, int from, int to)
+    {
+        var strategy = new SqlServerRetryingExecutionStrategy(context);
+        var result = await strategy.ExecuteAsync(async () =>
+        {
+            try
+            {
+                await context.Database.ExecuteSqlAsync(
+                    $@"EXEC TransferAmount @sourceId = {from}, @targetId = {to}, @amount = {amount};"
+                );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+            return true;
+        });
+        return result;
+    }
 }

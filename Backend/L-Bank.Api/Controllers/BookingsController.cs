@@ -103,7 +103,7 @@ namespace L_Bank.Api.Controllers
                 }
             }
 
-            var result = await bankService.NewBooking(request);
+            var result = await bankService.NewBookingWithProcedure(request);
             if (result.IsSuccess)
             {
                 return Ok(result.Data);

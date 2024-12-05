@@ -11,7 +11,7 @@ Console.WriteLine();
 try
 {
     using var client = new HttpClient();
-    client.BaseAddress = new("https://localhost:7015");
+    client.BaseAddress = new("http://localhost:5290");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 
     Console.WriteLine("Getting Inputs\n");
@@ -163,7 +163,7 @@ static async Task<TestScenarioData> PrepareTestData(HttpClient client)
     {
         var payload = new DepositRequest()
         {
-            Amount = Randomizer.GetRandom().Next(1000, 100000),
+            Amount = Randomizer.GetRandom().Next(1000000, 100000000),
             LedgerId = ledger.Id,
         };
         var response = await client.PostAsync("/api/deposits", ToHttpContent(payload));
@@ -216,6 +216,7 @@ static ScenarioProps CreateScenario(HttpClient client, TestScenarioData data, in
             }
         )
         .WithoutWarmUp()
+        // .WithWarmUpDuration(TimeSpan.FromSeconds(10))
         .WithLoadSimulations(
             Simulation.Inject(
                 rate: rps,

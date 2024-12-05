@@ -49,11 +49,12 @@ namespace L_Bank_W_Backend
                         x =>
                         {
                             x.MigrationsAssembly("L-Bank.DbAccess");
-                            // x.EnableRetryOnFailure(
-                            //     maxRetryCount: 5,
-                            //     maxRetryDelay: TimeSpan.FromSeconds(2),
-                            //     null
-                            // );
+                            x.CommandTimeout(10);
+                            x.EnableRetryOnFailure(
+                                maxRetryCount: 5,
+                                maxRetryDelay: TimeSpan.FromSeconds(10),
+                                null
+                            );
                         }
                     )
                     .UseSeeding(
@@ -161,7 +162,8 @@ namespace L_Bank_W_Backend
             }
 
             // Configure the HTTP request pipeline.
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             // For index.html
             app.UseAuthentication();
